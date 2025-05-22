@@ -1,6 +1,70 @@
 <mvc:View controllerName="com.sap.lh.mr.zcommunicationpreference.controller.CustomerPreference"
+    xmlns:vh="sap.ui.mdc.filterbar.vh" xmlns:smartfield="sap.ui.comp.smartfield"
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m">
-    <Page id="page" title="{i18n>title}">
-    </Page>
+    xmlns="sap.m"
+    displayBlock="true"
+    xmlns:f="sap.f" 
+    xmlns:mdc="sap.ui.mdc"
+    xmlns:core="sap.ui.core" xmlns:fb="sap.ui.comp.filterbar">
+    <f:DynamicPage id="dynamicPageId"
+            stickySubheaderProvider="iconTabBar"
+            class="sapUiNoContentPadding"
+            toggleHeaderOnTitleClick="{/titleClickable}">
+            <f:header>
+            <f:DynamicPageHeader
+       
+    >
+        <f:content>
+            <fb:FilterBar
+                id="filterbar"
+                persistencyKey="myPersKey"
+                useToolbar="false"
+                search=".onSearch"
+                filterChange=".onFilterChange"
+                afterVariantLoad=".onAfterVariantLoad"
+                filterContainerWidth="13rem"
+                header="inLog" showClearOnFB="false"
+                class="sapUiSmallMarginBottom"
+            >
+              <fb:filterGroupItems>                                            
+                                <fb:FilterGroupItem name="BusinessPartner" 
+                                label="Business Partner" 
+                                groupName="Group1" 
+                                visibleInFilterBar="true" mandatory="true">
+                                    <fb:control>
+                                        <Input
+                                         id="idBP" 
+                                         width="90%"  
+                                         showValueHelp="false"
+                                         value="{filters>/idBP}"
+                                        >
+                                        </Input>
+                                    </fb:control>
+                                </fb:FilterGroupItem>  
+                                <fb:FilterGroupItem name="ContractAccount" 
+                                label="Contract Account" 
+                                groupName="Group1" 
+                                visibleInFilterBar="true" mandatory="false">
+                                    <fb:control>
+                                        <Input
+                                         id="idCA" 
+                                         width="90%"  
+                                         showValueHelp="false"
+                                         value="{filters>/idCA}"
+                                        >
+                                        </Input>
+                                    </fb:control>
+                                </fb:FilterGroupItem>                                                                
+                            </fb:filterGroupItems>                        
+            </fb:FilterBar>
+        </f:content>        
+    </f:DynamicPageHeader>
+            </f:header>
+            <f:content>
+             <core:Fragment
+                fragmentName="com.sap.lh.mr.zcommunicationpreference.fragment.items"  
+                type="XML"
+            />
+     </f:content>
+    </f:DynamicPage>
 </mvc:View>

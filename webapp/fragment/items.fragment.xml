@@ -1,0 +1,83 @@
+<core:FragmentDefinition xmlns:tnt="sap.tnt" xmlns:cards="sap.f.cards" xmlns:form="sap.ui.layout.form" xmlns:m="sap.m" xmlns:core="sap.ui.core"     xmlns="sap.ui.table"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:u="sap.ui.unified"
+    xmlns:c="sap.ui.core"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form" 
+>   
+<Table id="tblCommunicationPreference"
+                ariaLabelledBy="title"
+                rows="{CustModel>/}" 
+                enableSelectAll="false"
+                selectionMode="Single" 
+                selectionBehavior="RowSelector"               
+                enableColumnFreeze="true">
+                <extension>
+                    <m:OverflowToolbar style="Clear">
+                        <m:Title id="title" text="Customer Details"/>
+                        <m:ToolbarSpacer/>
+                        <m:Button
+							id="btnCreate" text="Create"
+							press="onCreateRecord"/>
+                    </m:OverflowToolbar>
+                </extension>
+                <columns>
+                    <Column
+                        width="11rem">
+                        <m:Label text="Business Partner" textAlign="Center" width="100%"/>
+                        <template>
+                            <m:Text text="{CustModel>AccountID}"/>
+                        </template>
+                    </Column>   
+                    <Column
+                        width="11rem">
+                        <m:Label text="Object Type" textAlign="Center" width="100%"/>
+                        <template>
+                            <m:Text text="{CustModel>EntitySet}"/>
+                        </template>
+                    </Column>  
+                    <Column
+                        width="11rem">
+                        <m:Label text="Object Key" textAlign="Center" width="100%"/>
+                        <template>
+                            <m:Text text="{CustModel>EntityKey}"/>
+                        </template>
+                    </Column> 
+                    <Column
+                        width="11rem">
+                        <m:Label text=" Correspondence Type" textAlign="Center" width="100%"/>
+                        <template>
+                            <m:Text text="{CustModel>CorrespondenceTypeID}"/>
+                        </template>
+                    </Column> 
+                    <Column
+                        width="11rem">
+                        <m:Label text=" Correspondence Role" textAlign="Center" width="100%"/>
+                        <template>
+                            <m:Text text="{CustModel>CommunicationCategoryID}"/>
+                        </template>
+                    </Column>   
+                    <Column
+                        width="11rem">
+                        <m:Label text="Delivery Channel" textAlign="Center" width="100%"/>
+                        <template>
+                            <m:Text text="{CustModel>DeliveryChannelID}"/>
+                        </template>
+                    </Column>   
+                    <Column
+                        width="11rem">
+                        <m:Label text="Delivery Address" textAlign="Center" width="100%"/>
+                        <template>
+                            <m:Text text="{CustModel>DeliveryAddress}"/>
+                        </template>
+                    </Column>  
+                    <Column
+                        width="11rem">
+                        <m:Label text="Status" textAlign="Center" width="100%"/>
+                        <template>
+                            <m:Text text="{CustModel>Status}"/>
+                        </template>
+                    </Column> 
+                </columns>
+        </Table> 
+</core:FragmentDefinition>
