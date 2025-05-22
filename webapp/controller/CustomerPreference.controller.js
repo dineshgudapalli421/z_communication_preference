@@ -72,7 +72,7 @@ sap.ui.define([
                 }
             });
 
-            //this.switchState("Navigation");
+            this.switchState("Navigation");
 
         },
         onCreateRecord: function () {
@@ -125,7 +125,7 @@ sap.ui.define([
                         return oDialog;
                     });
                 }
-                this.getView().byId("iduBp").setValue(bPartner);
+                //this.getView().byId("iduBp").setValue(bPartner);
                 this.oDialog.then((oDialog) => {
                     oDialog.open();
                 });

@@ -75,7 +75,8 @@
                         width="11rem">
                         <m:Label text="Status" textAlign="Center" width="100%"/>
                         <template>
-                            <m:Text text="{CustModel>Status}"/>
+                            <!-- <m:Text text="{CustModel>Status}"/> -->
+                            <m:CheckBox id="colStatus" />
                         </template>
                     </Column> 
                 </columns>
