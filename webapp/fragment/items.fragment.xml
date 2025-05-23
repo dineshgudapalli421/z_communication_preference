@@ -26,7 +26,7 @@
                         width="11rem">
                         <m:Label text="Business Partner" textAlign="Center" width="100%"/>
                         <template>
-                            <m:Text text="{CustModel>AccountID}"/>
+                            <m:Text id="txtBP" text="{CustModel>AccountID}"/>
                         </template>
                     </Column>   
                     <Column
@@ -72,11 +72,10 @@
                         </template>
                     </Column>  
                     <Column
-                        width="11rem">
+                        width="11rem" hAlign="Center">
                         <m:Label text="Status" textAlign="Center" width="100%"/>
                         <template>
-                            <!-- <m:Text text="{CustModel>Status}"/> -->
-                            <m:CheckBox id="colStatus" />
+                            <m:CheckBox id="colStatus" textAlign="Center" editable="false" selected="{= ${CustModel>Status} === true}" />
                         </template>
                     </Column> 
                 </columns>

@@ -13,7 +13,7 @@ sap.ui.define([
     "use strict";
 
     return Controller.extend("com.sap.lh.mr.zcommunicationpreference.controller.CustomerPreference", {
-        onInit() { 
+        onInit() {
             const oView = this.getView();
             oView.setModel(new JSONModel({
                 rowMode: "Fixed"
@@ -92,11 +92,12 @@ sap.ui.define([
         },
 
         onCancelDialog: function () {
-            this.oDialog.then().then((oDialog) => {
-                oDialog.close();
-                oDialog.destroy();
-            });
-            this.oDialog = null;
+            // this.oDialog.then().then((oDialog) => {
+            //     oDialog.close();
+            //     oDialog.destroy();
+            // });
+            // this.oDialog = null;
+            this.oDialog.close();
         },
         onSubmitDialog: function () {
             var oInpBP = sap.ui.getCore().byId("createDialog--idBp");
@@ -105,8 +106,6 @@ sap.ui.define([
             var objType = oInpobjeType.getSelectedItem().getText();
         },
         handleActionPress: function (oEvent) {
-            const oRow = oEvent.getParameter("row");
-            const oItem = oEvent.getParameter("item");
             var tb = this.getView().byId("tblCommunicationPreference");
             var rowid = tb.getSelectedIndices();
             if (rowid.length === 0) {
@@ -116,22 +115,25 @@ sap.ui.define([
                 let client = tb.getRows()[rowid].getCells()[0].getText();
                 let bPartner = tb.getRows()[rowid].getCells()[1].getText();
                 if (!this.oDialog) {
-                    this.oDialog = Fragment.load({
-                        name: "com.sap.lh.mr.zcommunicationpreference.fragment.editDialog",
-                        id: "editDialog",
-                        controller: this
-                    }).then((oDialog) => {
-                        this.getView().addDependent(oDialog);
-                        return oDialog;
-                    });
+                    this.loadFragment({
+                        name: "com.sap.lh.mr.zcommunicationpreference.fragment.editDialog"
+                    }).then(function(odialog){
+                        this.oDialog = odialog;
+                        this.oDialog.open();
+                    }.bind(this))
                 }
-                //this.getView().byId("iduBp").setValue(bPartner);
-                this.oDialog.then((oDialog) => {
-                    oDialog.open();
-                });
-
+                else{
+                    this.oDialog.open();
+                }
             }
 
+        },
+        getBusinessPartner() {
+            var oTable = this.getView().byId("tblCommunicationPreference");
+            var aSelectedIndices = oTable.getSelectedIndices();
+            var aSelectedRows = aSelectedIndices.map(iIndex => oTable.getContextByIndex(iIndex).getObject());
+            var bpartner = aSelectedRows[0]?.AccountID;
+            return bpartner;
         },
         switchState: function (sKey) {
             const oTable = this.byId("tblCommunicationPreference");
