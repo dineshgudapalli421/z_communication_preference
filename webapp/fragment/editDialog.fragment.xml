@@ -8,46 +8,46 @@
 				<Label text="Business Partner"/>
 				<Input
 					id="iduBp"
-					showSuggestion="true" editable="false">
+					showSuggestion="true" editable="false" value="{/BusinessPartner}">
 				</Input>
 
 				<Label text="Object Type"/>
 				<Input
 					id="iduObjectType"
-					showSuggestion="true" editable="false">
+					showSuggestion="true" editable="false" value="{/ObjectType}">
 				</Input>
 
 				<Label text="Object key"/>
 				<Input
-					id="iduKey"
-					showSuggestion="true" editable="false">
+					id="iduObjectKey"
+					showSuggestion="true" editable="false"  value="{/ObjectKey}">
 				</Input>
 
 				<Label text="Correspondence Type"/>
 				<Input
 					id="iduCorrespType"
-					showSuggestion="true"  editable="true">
+					showSuggestion="true"  editable="false" value="{/CorreSpType}">
 				</Input>
 				
 				<Label text="Correspondence Role"/>
 				<Input
 					id="iduCorrespRole"
-					showSuggestion="true"  editable="false">
+					showSuggestion="true"  editable="false" value="{/CorreSpRole}">
 				</Input>				
 
 				<Label text="Delivery Channel"/>
 				<Input
 					id="iduDeliveryChannel"
-					showSuggestion="true"  editable="false">
+					showSuggestion="true"  editable="false" value="{/DeliveryChannel}">
 				</Input>
 
 				<Label text="Delivery Address"/>
 				<Input
 					id="iduDeliveryAddress"
-					showSuggestion="true" editable="true">
+					showSuggestion="true" editable="true" value="{/DeliveryAddress}">
 				</Input>
 
-				<CheckBox id="chkUStatus" text="Status" selected="true" />
+				<CheckBox id="chkUStatus" text="Status" selected="{= ${/Status} === true}" />
 		  </form:SimpleForm>
 		</content>
 		

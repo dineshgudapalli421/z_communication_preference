@@ -11,7 +11,7 @@
                 enableSelectAll="false"
                 selectionMode="Single" 
                 selectionBehavior="RowSelector"               
-                enableColumnFreeze="true">
+                enableColumnFreeze="true" rowSelectionChange="onRowSelect">
                 <extension>
                     <m:OverflowToolbar style="Clear">
                         <m:Title id="title" text="Customer Details"/>
@@ -19,6 +19,11 @@
                         <m:Button
 							id="btnCreate" text="Create"
 							press="onCreateRecord"/>
+                        <m:Button
+                    icon="sap-icon://edit"
+                    text="Edit"
+                    press="handleActionPress"
+                />
                     </m:OverflowToolbar>
                 </extension>
                 <columns>

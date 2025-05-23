@@ -18,22 +18,22 @@ sap.ui.define([
             oView.setModel(new JSONModel({
                 rowMode: "Fixed"
             }), "ui");
-            const fnPress = this.handleActionPress.bind(this);
-            this.modes = [
-                {
-                    key: "Navigation",
-                    text: "Navigation",
-                    handler: function () {
-                        const oTemplate = new RowAction({
-                            items: [
-                                new RowActionItem({ icon: "sap-icon://edit", text: "Edit", press: fnPress })
-                            ]
-                        });
-                        return [1, oTemplate];
-                    }
-                }
-            ];
-            this.getView().setModel(new JSONModel({ items: this.modes }), "modes");
+            // const fnPress = this.handleActionPress.bind(this);
+            // this.modes = [
+            //     {
+            //         key: "Navigation",
+            //         text: "Navigation",
+            //         handler: function () {
+            //             const oTemplate = new RowAction({
+            //                 items: [
+            //                     new RowActionItem({ icon: "sap-icon://edit", text: "Edit", press: fnPress })
+            //                 ]
+            //             });
+            //             return [1, oTemplate];
+            //         }
+            //     }
+            // ];
+            // this.getView().setModel(new JSONModel({ items: this.modes }), "modes");
         },
         onSearch: function () {
             const oView = this.getView();
@@ -72,7 +72,7 @@ sap.ui.define([
                 }
             });
 
-            this.switchState("Navigation");
+            //this.switchState("Navigation");
 
         },
         onCreateRecord: function () {
@@ -92,11 +92,6 @@ sap.ui.define([
         },
 
         onCancelDialog: function () {
-            // this.oDialog.then().then((oDialog) => {
-            //     oDialog.close();
-            //     oDialog.destroy();
-            // });
-            // this.oDialog = null;
             this.oDialog.close();
         },
         onSubmitDialog: function () {
@@ -105,6 +100,67 @@ sap.ui.define([
             var bPartner = oInpBP.getValue();
             var objType = oInpobjeType.getSelectedItem().getText();
         },
+
+        onUpdateDialog: function (oEvent) {
+            const oBpartner = this.byId("iduBp").getValue();
+            const objectType = this.byId("iduObjectType").getValue();
+            const objectKey = this.byId("iduObjectKey").getValue();
+            const correspType = this.byId("iduCorrespType").getValue();
+            const correspRole = this.byId("iduCorrespRole").getValue();
+            const deliveryChannel = this.byId("iduDeliveryChannel").getValue();
+            const deliveryAddress = this.byId("iduDeliveryAddress").getValue();
+            const status = this.byId("chkUStatus").getSelected();
+
+            let objRequest = {
+                "AccountID": oBpartner,
+                "EntitySet": objectType,
+                "EntityKey": objectKey,
+                "CorrespondenceTypeID": correspType,
+                "CommunicationCategoryID": correspRole,
+                "PortalID": "",
+                "DeliveryChannelID": deliveryChannel,
+                "DeliveryAddressLine": "001",
+                "DeliveryAddress": deliveryAddress,
+                "Status": status,
+                "Settings": ""
+            };
+            var oModel = this.getView().getModel();
+            var sPath = "/ZCommunicationPreferences(AccountID='" + oBpartner + "')";
+            oModel.update(sPath, objRequest, {
+                method: "PATCH",
+                success: function (data) {
+                    console.log("Business Partner updated successfully:", data);
+                },
+                error: function (error) {
+                    console.error("Error updating business partner:", error);
+                }
+            });
+        },
+
+        onRowSelect: async function (oEvent) {
+            var oTable = this.getView().byId("tblCommunicationPreference");
+            var rowID = oEvent.getSource().getSelectedIndices();
+            var objRow = oTable.getContextByIndex(rowID).getModel().getData()[rowID];
+            var selectedData = {
+                "BusinessPartner": objRow.AccountID,
+                "ObjectType": objRow.EntitySet,
+                "ObjectKey": objRow.EntityKey,
+                "CorreSpType": objRow.CorrespondenceTypeID,
+                "CorreSpRole": objRow.CommunicationCategoryID,
+                "DeliveryChannel": objRow.DeliveryChannelID,
+                "DeliveryAddress": objRow.DeliveryAddress,
+                "Status": objRow.Status
+            };
+            let oModel = new JSONModel();
+            oModel.setData(selectedData, "BPModel");
+
+            this.oDialog ??= await this.loadFragment({
+                name: "com.sap.lh.mr.zcommunicationpreference.fragment.editDialog"
+            });
+            this.oDialog.open();
+            this.oDialog.setModel(oModel);
+        },
+
         handleActionPress: function (oEvent) {
             var tb = this.getView().byId("tblCommunicationPreference");
             var rowid = tb.getSelectedIndices();
@@ -117,12 +173,12 @@ sap.ui.define([
                 if (!this.oDialog) {
                     this.loadFragment({
                         name: "com.sap.lh.mr.zcommunicationpreference.fragment.editDialog"
-                    }).then(function(odialog){
+                    }).then(function (odialog) {
                         this.oDialog = odialog;
                         this.oDialog.open();
                     }.bind(this))
                 }
-                else{
+                else {
                     this.oDialog.open();
                 }
             }
