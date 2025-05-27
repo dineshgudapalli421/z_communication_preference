@@ -13,15 +13,11 @@
 
 				<Label text="Object Type"/>
 				<Select id="idObjectType" change=".onObjectTypeChange">
-					<core:Item key="isuPartner" text="ISUPARTNER" />
-					<core:Item key="isuAccount" text="ISUACCOUNT" />
+					<core:Item key="ISUACCOUNT" text="ISUACCOUNT" />
+					<core:Item key="ISUPARTNER" text="ISUPARTNER" />
 				</Select>
 
-				<Label text="Object key"/>
-				<!-- <Input
-					id="idKey"
-					showSuggestion="true">
-				</Input> -->
+				<Label text="Object key"/>				
 				<ComboBox id="cmbobjKey"
 					showClearIcon="true"					
 				>				
@@ -30,34 +26,21 @@
 				<Label text="Corresp. Type"/>
 				<ComboBox id="cmbCorrespType"
 					showClearIcon="true">					
-				</ComboBox>	
-				<!-- <ComboBox id="cmbCorrespType"
-					showClearIcon="true" items="{
-					path: '/',
-					sorter: { path: 'text' }
-				}">
-					<core:Item key="{CorrespondenceTypeID}" text="{Description}" />
-				</ComboBox> -->
+				</ComboBox>					
 				
-				<Label text="Corresp. Role"/>
-				<Input
-					id="idCorrespRole"
-					showSuggestion="true" value="COMM" editable="false">
-				</Input>		
+				<Label text="Corresp. Role"/>				
+				<Select id="idCorrespRole">
+					<core:Item key="COMM" text="COMM" />
+					<core:Item key="ZPLS" text="ZPLS" />
+				</Select>		
 
 				<Label text="Delivery Channel"/>
 				<Select id="idDeliveryChannel">
-					<core:Item key="emal" text="EMAL" />
-					<core:Item key="sms" text="SMS" />
-					<core:Item key="ivr" text="IVR" />
-					<core:Item key="push" text="PUSH" />
+					<core:Item key="EMAL" text="EMAL" />
+					<core:Item key="SMS" text="SMS" />
+					<core:Item key="IVR" text="IVR" />
+					<core:Item key="PUSH" text="PUSH" />
 				</Select>
-
-				<!-- <Label text="Delivery Address"/>
-				<Input
-					id="idDeliveryAddress"
-					showSuggestion="true">
-				</Input> -->
 
 				<CheckBox id="chkStatus" text="Status" selected="true" />
 		  </form:SimpleForm>

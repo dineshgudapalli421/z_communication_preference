@@ -37,7 +37,7 @@
                         width="11rem">
                         <m:Label text="Object Type" textAlign="Center" width="100%"/>
                         <template>
-                            <m:Text text="{CustModel>EntitySet}"/>
+                            <m:Text text="{= ${CustModel>EntitySet} === 'Account' ? 'Business Partner' : 'ContractAccount'}"/>
                         </template>
                     </Column>  
                     <Column
@@ -67,14 +67,7 @@
                         <template>
                             <m:Text text="{CustModel>DeliveryChannelID}"/>
                         </template>
-                    </Column>   
-                    <Column
-                        width="11rem">
-                        <m:Label text="Delivery Address" textAlign="Center" width="100%"/>
-                        <template>
-                            <m:Text text="{CustModel>DeliveryAddress}"/>
-                        </template>
-                    </Column>  
+                    </Column> 
                     <Column
                         width="11rem" hAlign="Center">
                         <m:Label text="Status" textAlign="Center" width="100%"/>

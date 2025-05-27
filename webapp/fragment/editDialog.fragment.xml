@@ -41,12 +41,6 @@
 					showSuggestion="true"  editable="false" value="{/DeliveryChannel}">
 				</Input>
 
-				<Label text="Delivery Address"/>
-				<Input
-					id="iduDeliveryAddress"
-					showSuggestion="true" editable="false" value="{/DeliveryAddress}">
-				</Input>
-
 				<CheckBox id="chkUStatus" text="Status" selected="{= ${/Status} === true}" />
 		  </form:SimpleForm>
 		</content>

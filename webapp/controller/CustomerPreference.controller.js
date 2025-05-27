@@ -23,12 +23,14 @@ sap.ui.define([
         onSearch: function () {
             const oView = this.getView();
             var aFilter = [];
-            var businessPartner = this.getView().byId("idBP").getValue();
-            var contractAccount = this.getView().byId("idCA").getValue();
+            const businessPartner = this.getView().byId("idBP").getValue();
+            const contractAccount = this.getView().byId("idCA").getValue();
+            const chkStatus = this.getView().byId("idStatus").getSelectedKey();
             if (businessPartner === "") {
                 return MessageBox.error("Business Partner is mandatory...");
             }
             aFilter.push(new Filter("AccountID", FilterOperator.EQ, businessPartner));
+            aFilter.push(new Filter("Status", FilterOperator.EQ, chkStatus));
             if (contractAccount !== "") {
                 aFilter.push(new Filter("EntitySet", FilterOperator.EQ, "ContractAccount"));
                 aFilter.push(new Filter("EntityKey", FilterOperator.EQ, contractAccount));
@@ -156,7 +158,7 @@ sap.ui.define([
             var sPath = "/ZCommunicationPreferences(AccountID='" + oBpartner + "')";
             oModel.update(sPath, objRequest, {
                 method: "PATCH",
-                success: function (response) {                    
+                success: function (response) {
                     return MessageBox.success("Business Partner created successfully:", response);
                 },
                 error: function (error) {
@@ -166,13 +168,13 @@ sap.ui.define([
         },
 
         onUpdateDialog: function (oEvent) {
+            debugger;
             const oBpartner = this.byId("iduBp").getValue();
             const objectType = this.byId("iduObjectType").getValue();
             const objectKey = this.byId("iduObjectKey").getValue();
             const correspType = this.byId("iduCorrespType").getValue();
             const correspRole = this.byId("iduCorrespRole").getValue();
             const deliveryChannel = this.byId("iduDeliveryChannel").getValue();
-            const deliveryAddress = this.byId("iduDeliveryAddress").getValue();
             const status = this.byId("chkUStatus").getSelected();
 
             let objRequest = {
@@ -184,7 +186,6 @@ sap.ui.define([
                 "PortalID": "",
                 "DeliveryChannelID": deliveryChannel,
                 "DeliveryAddressLine": "001",
-                "DeliveryAddress": deliveryAddress,
                 "Status": status,
                 "Settings": ""
             };
@@ -192,8 +193,8 @@ sap.ui.define([
             var sPath = "/ZCommunicationPreferences(AccountID='" + oBpartner + "')";
             oModel.update(sPath, objRequest, {
                 method: "PATCH",
-                success: function (data) {
-                    //this.oDialog.close();
+                success: function (data) {                    
+                    this.byId("application-Z_COM_PREFRENCE-change-component---CustomerPreference--filterbar-btnGo-BDI-content").firePress();
                     return MessageBox.success("Business Partner updated successfully:", data);
                 },
                 error: function (error) {

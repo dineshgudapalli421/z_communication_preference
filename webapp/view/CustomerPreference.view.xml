@@ -54,7 +54,19 @@
                                         >
                                         </Input>
                                     </fb:control>
-                                </fb:FilterGroupItem>                                                                
+                                </fb:FilterGroupItem> 
+                                <fb:FilterGroupItem name="Status" 
+                                label="Status" 
+                                groupName="Group1" 
+                                visibleInFilterBar="true" mandatory="false">
+                                    <fb:control>
+                                        <!-- <CheckBox id="idStatus" text="Status" selected="false"></CheckBox> -->
+                                        <Select id="idStatus" >
+                                            <core:Item key="true" text="true" />
+                                            <core:Item key="false" text="false" />
+                                        </Select>
+                                    </fb:control>
+                                </fb:FilterGroupItem>                                                               
                             </fb:filterGroupItems>                        
             </fb:FilterBar>
         </f:content>        
