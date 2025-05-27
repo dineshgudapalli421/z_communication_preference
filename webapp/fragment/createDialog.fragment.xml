@@ -8,11 +8,11 @@
 				<Label text="Business Partner"/>
 				<Input
 					id="idBp"
-					showSuggestion="true">
+					showSuggestion="true" change=".onBPChange">
 				</Input>
 
 				<Label text="Object Type"/>
-				<Select id="idObjectType">
+				<Select id="idObjectType" change=".onObjectTypeChange">
 					<core:Item key="isuPartner" text="ISUPARTNER" />
 					<core:Item key="isuAccount" text="ISUACCOUNT" />
 				</Select>
@@ -23,19 +23,27 @@
 					showSuggestion="true">
 				</Input> -->
 				<ComboBox id="cmbobjKey"
-					showClearIcon="true">
-				</ComboBox>
-
-				<Label text="Corresp. Role"/>
-				<ComboBox id="cmbCorrespRole"
-					showClearIcon="true">
+					showClearIcon="true"					
+				>				
 				</ComboBox>
 
 				<Label text="Corresp. Type"/>
+				<ComboBox id="cmbCorrespType"
+					showClearIcon="true">					
+				</ComboBox>	
+				<!-- <ComboBox id="cmbCorrespType"
+					showClearIcon="true" items="{
+					path: '/',
+					sorter: { path: 'text' }
+				}">
+					<core:Item key="{CorrespondenceTypeID}" text="{Description}" />
+				</ComboBox> -->
+				
+				<Label text="Corresp. Role"/>
 				<Input
-					id="idCorrespType"
+					id="idCorrespRole"
 					showSuggestion="true" value="COMM" editable="false">
-				</Input>
+				</Input>		
 
 				<Label text="Delivery Channel"/>
 				<Select id="idDeliveryChannel">
@@ -45,11 +53,11 @@
 					<core:Item key="push" text="PUSH" />
 				</Select>
 
-				<Label text="Delivery Address"/>
+				<!-- <Label text="Delivery Address"/>
 				<Input
 					id="idDeliveryAddress"
 					showSuggestion="true">
-				</Input>
+				</Input> -->
 
 				<CheckBox id="chkStatus" text="Status" selected="true" />
 		  </form:SimpleForm>
@@ -57,7 +65,7 @@
 		
 		<buttons>
 		<Button id="btnSubmit" text="Submit" press=".onSubmitDialog" />
-		<Button id="btnCancel" text="Cancel" press=".onCancelDialog" />
+		<Button id="btnCancel" text="Cancel" press=".onCancelCreateDialog" />
 		</buttons>
 	  </Dialog>
 </core:FragmentDefinition>

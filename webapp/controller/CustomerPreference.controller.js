@@ -18,22 +18,7 @@ sap.ui.define([
             oView.setModel(new JSONModel({
                 rowMode: "Fixed"
             }), "ui");
-            // const fnPress = this.handleActionPress.bind(this);
-            // this.modes = [
-            //     {
-            //         key: "Navigation",
-            //         text: "Navigation",
-            //         handler: function () {
-            //             const oTemplate = new RowAction({
-            //                 items: [
-            //                     new RowActionItem({ icon: "sap-icon://edit", text: "Edit", press: fnPress })
-            //                 ]
-            //             });
-            //             return [1, oTemplate];
-            //         }
-            //     }
-            // ];
-            // this.getView().setModel(new JSONModel({ items: this.modes }), "modes");
+            this.fragments = {};
         },
         onSearch: function () {
             const oView = this.getView();
@@ -46,7 +31,7 @@ sap.ui.define([
             aFilter.push(new Filter("AccountID", FilterOperator.EQ, businessPartner));
             if (contractAccount !== "") {
                 aFilter.push(new Filter("EntitySet", FilterOperator.EQ, "ContractAccount"));
-                aFilter.push(new Filter("AcEntityKey", FilterOperator.EQ, contractAccount));
+                aFilter.push(new Filter("EntityKey", FilterOperator.EQ, contractAccount));
             }
             var oModel = this.getOwnerComponent().getModel();
 
@@ -75,30 +60,109 @@ sap.ui.define([
             //this.switchState("Navigation");
 
         },
-        onCreateRecord: function () {
-            if (!this.oDialog) {
-                this.oDialog = Fragment.load({
-                    name: "com.sap.lh.mr.zcommunicationpreference.fragment.createDialog",
-                    id: "createDialog",
-                    controller: this
-                }).then((oDialog) => {
-                    this.getView().addDependent(oDialog);
-                    return oDialog;
-                });
-            }
-            this.oDialog.then((oDialog) => {
-                oDialog.open();
+        onCreateRecord: async function () {
+            var that = this;
+            this.oCreateDialog ??= await this.loadFragment({
+                name: "com.sap.lh.mr.zcommunicationpreference.fragment.createDialog"
+            });
+            this.oCreateDialog.open();
+
+            let objComboBox = new sap.m.ComboBox();
+            objComboBox = this.byId("cmbCorrespType");
+            let oCorrespTypeModel = this.getView().getModel();
+            oCorrespTypeModel.read("/CorrespondenceTypes?$select=CorrespondenceTypeID,Description", {
+                success: function (response) {
+                    if (response.results.length > 0) {
+                        var objCorrespndType = [];
+                        var uniqueData = that._removeDuplicates(response.results, "CorrespondenceTypeID");
+                        for (var i = 0; i < uniqueData.length; i++) {
+                            objCorrespndType.push({ "CorrespondenceTypeID": uniqueData[i] });
+                        }
+                        let odropdownModel = new sap.ui.model.json.JSONModel();
+                        odropdownModel.setData(objCorrespndType, "CorrespondTypes");
+                        objComboBox.setModel(odropdownModel);
+                        objComboBox.bindAggregation("items", {
+                            path: "/",
+                            template: new sap.ui.core.Item({
+                                key: "{CorrespondenceTypeID}",
+                                text: "{CorrespondenceTypeID}"
+                            })
+                        });
+                    }
+                    else if (response.results.length === 0) {
+                        return MessageBox.success("There are no Corresponed Types exists...");
+                    }
+                },
+                error: (oError) => {
+                    console.error("Error:", oError);
+                }
             });
         },
-
-        onCancelDialog: function () {
-            this.oDialog.close();
+        _removeDuplicates: function (data, key) {
+            const uniqueData = data.reduce((acc, item) => {
+                const value = item[key];
+                if (!acc.includes(value)) {
+                    acc.push(value);
+                }
+                return acc;
+            }, []);
+            return uniqueData;
         },
-        onSubmitDialog: function () {
-            var oInpBP = sap.ui.getCore().byId("createDialog--idBp");
-            var oInpobjeType = sap.ui.getCore().byId("createDialog--idObjectType");
-            var bPartner = oInpBP.getValue();
-            var objType = oInpobjeType.getSelectedItem().getText();
+        onCancelEditDialog: function (oEvent) {
+            this.oEditDialog.destroy();
+            this.oEditDialog = undefined;
+            //this.oEditDialog.close();
+        },
+        onCancelCreateDialog: function (oEvent) {
+            this.oCreateDialog.destroy();
+            this.oCreateDialog = undefined;
+            //this.oCreateDialog.close();
+
+        },
+        onSubmitDialog: function (oEvent) {
+            debugger;
+            const oBpartner = this.byId("idBp").getValue();
+            let objectType = this.byId("idObjectType").getSelectedKey() ? this.byId("idObjectType").getSelectedItem().getText() : '';
+            const objectKey = this.byId("cmbobjKey").getSelectedKey() ? this.byId("cmbobjKey").getSelectedItem().getText() : '';
+            const correspType = this.byId("cmbCorrespType").getSelectedKey() ? this.byId("cmbCorrespType").getSelectedItem().getText() : '';
+            const correspRole = this.byId("idCorrespRole").getValue();
+            const deliveryChannel = this.byId("idDeliveryChannel").getSelectedKey() ? this.byId("idDeliveryChannel").getSelectedItem().getText() : '';
+            // const deliveryAddress = this.byId("idDeliveryAddress").getValue();
+            const status = this.byId("chkStatus").getSelected();
+            if (!oBpartner) return MessageBox.error("Business Partner is mandatory...");
+            if (!objectKey) return MessageBox.error("Object Key is mandatory...");
+            if (!correspType) return MessageBox.error("Correspondence Type is mandatory...");
+            if (objectType === "ISUACCOUNT") {
+                objectType = "ContractAccount";
+            }
+            else {
+                objectType = "Account";
+            }
+
+            let objRequest = {
+                "AccountID": oBpartner,
+                "EntitySet": objectType,
+                "EntityKey": objectKey,
+                "CorrespondenceTypeID": correspType,
+                "CommunicationCategoryID": correspRole,
+                "PortalID": "",
+                "DeliveryChannelID": deliveryChannel,
+                "DeliveryAddressLine": "001",
+                // "DeliveryAddress": deliveryAddress,
+                "Status": status,
+                "Settings": ""
+            };
+            var oModel = this.getView().getModel();
+            var sPath = "/ZCommunicationPreferences(AccountID='" + oBpartner + "')";
+            oModel.update(sPath, objRequest, {
+                method: "PATCH",
+                success: function (response) {                    
+                    return MessageBox.success("Business Partner created successfully:", response);
+                },
+                error: function (error) {
+                    return MessageBox.error("Error when create business partner:", error);
+                }
+            });
         },
 
         onUpdateDialog: function (oEvent) {
@@ -129,10 +193,11 @@ sap.ui.define([
             oModel.update(sPath, objRequest, {
                 method: "PATCH",
                 success: function (data) {
-                    console.log("Business Partner updated successfully:", data);
+                    //this.oDialog.close();
+                    return MessageBox.success("Business Partner updated successfully:", data);
                 },
                 error: function (error) {
-                    console.error("Error updating business partner:", error);
+                    return MessageBox.error("Error updating business partner:", error);
                 }
             });
         },
@@ -142,7 +207,7 @@ sap.ui.define([
             var rowID = oEvent.getSource().getSelectedIndices();
             var objRow = oTable.getContextByIndex(rowID).getModel().getData()[rowID];
             var selectedData = {
-                "BusinessPartner": objRow.AccountID,
+                "AccountID": objRow.AccountID,
                 "ObjectType": objRow.EntitySet,
                 "ObjectKey": objRow.EntityKey,
                 "CorreSpType": objRow.CorrespondenceTypeID,
@@ -161,26 +226,32 @@ sap.ui.define([
             this.oDialog.setModel(oModel);
         },
 
-        handleActionPress: function (oEvent) {
-            var tb = this.getView().byId("tblCommunicationPreference");
-            var rowid = tb.getSelectedIndices();
-            if (rowid.length === 0) {
+        handleActionPress: async function (oEvent) {
+            var oTable = this.getView().byId("tblCommunicationPreference");
+            var rowID = oTable.getSelectedIndices();
+            if (rowID.length === 0) {
                 return MessageBox.error("Please select a row.");
             }
-            else if (rowid.length > 0) {
-                let client = tb.getRows()[rowid].getCells()[0].getText();
-                let bPartner = tb.getRows()[rowid].getCells()[1].getText();
-                if (!this.oDialog) {
-                    this.loadFragment({
-                        name: "com.sap.lh.mr.zcommunicationpreference.fragment.editDialog"
-                    }).then(function (odialog) {
-                        this.oDialog = odialog;
-                        this.oDialog.open();
-                    }.bind(this))
-                }
-                else {
-                    this.oDialog.open();
-                }
+            else if (rowID.length > 0) {
+                var objRow = oTable.getContextByIndex(rowID).getModel().getData()[rowID];
+                var selectedData = {
+                    "AccountID": objRow.AccountID,
+                    "ObjectType": objRow.EntitySet,
+                    "ObjectKey": objRow.EntityKey,
+                    "CorreSpType": objRow.CorrespondenceTypeID,
+                    "CorreSpRole": objRow.CommunicationCategoryID,
+                    "DeliveryChannel": objRow.DeliveryChannelID,
+                    "DeliveryAddress": objRow.DeliveryAddress,
+                    "Status": objRow.Status
+                };
+                let oModel = new JSONModel();
+                oModel.setData(selectedData, "BPModel");
+
+                this.oEditDialog ??= await this.loadFragment({
+                    name: "com.sap.lh.mr.zcommunicationpreference.fragment.editDialog"
+                });
+                this.oEditDialog.open();
+                this.oEditDialog.setModel(oModel);
             }
 
         },
@@ -207,5 +278,105 @@ sap.ui.define([
             oTable.setRowActionTemplate(oTemplate);
             oTable.setRowActionCount(iCount);
         },
+
+        onBPChange: function (oEvent) {
+            const oBusinessPartner = oEvent.getSource().getValue();
+            if (!oBusinessPartner) {
+                return MessageBox.error("Business Partner is Mandatory...");
+            }
+            const objType = this.byId("idObjectType").getSelectedItem().getText();
+            if (objType === "ISUACCOUNT") {
+                let oComboBox = new sap.m.ComboBox();
+                oComboBox = this.byId("cmbobjKey");
+                let oContractModel = this.getView().getModel();
+                oContractModel.read("/Accounts(AccountID='" + oBusinessPartner + "')/ContractAccounts", {
+                    success: function (response) {
+                        if (response.results.length > 0) {
+                            var odropdownModel = new sap.ui.model.json.JSONModel();
+                            odropdownModel.setData(response.results, "ContractAccounts");
+                            oComboBox.setModel(odropdownModel);
+                            oComboBox.bindAggregation("items", {
+                                path: "/",
+                                template: new sap.ui.core.Item({
+                                    key: "{ContractAccountID}",
+                                    text: "{ContractAccountID}"
+                                })
+                            });
+                        }
+                        else if (response.results.length === 0) {
+                            return MessageBox.success("There are no contract accounts with this business partner...");
+                        }
+                    },
+                    error: (oError) => {
+                        console.error("Error:", oError);
+                    }
+                });
+
+            }
+            else if (objType === "ISUPARTNER") {
+                let oComboBox = new sap.m.ComboBox();
+                oComboBox = this.byId("cmbobjKey");
+                let oPartnerModel = new sap.ui.model.json.JSONModel();
+                oPartnerModel.setData([{ "BusinessPartner": oBusinessPartner }], "BusinessPartners");
+                oComboBox.setModel(oPartnerModel);
+                oComboBox.bindAggregation("items", {
+                    path: "/",
+                    template: new sap.ui.core.Item({
+                        key: "{BusinessPartner}",
+                        text: "{BusinessPartner}"
+                    })
+                });
+            }
+
+        },
+        onObjectTypeChange: function (oEvent) {
+            const objType = oEvent.getSource().getSelectedItem().getText();
+            const oBusinessPartner = this.byId("idBp").getValue();
+            if (!oBusinessPartner) {
+                return MessageBox.error("Please enter business partner...")
+            }
+            if (objType === "ISUACCOUNT") {
+                let oComboBox = new sap.m.ComboBox();
+                oComboBox = this.byId("cmbobjKey");
+                let oContractModel = this.getView().getModel();
+                oContractModel.read("/Accounts(AccountID='" + oBusinessPartner + "')/ContractAccounts", {
+                    success: function (response) {
+                        if (response.results.length > 0) {
+                            var odropdownModel = new sap.ui.model.json.JSONModel();
+                            odropdownModel.setData(response.results, "ContractAccounts");
+                            oComboBox.setModel(odropdownModel);
+                            oComboBox.bindAggregation("items", {
+                                path: "/",
+                                template: new sap.ui.core.Item({
+                                    key: "{ContractAccountID}",
+                                    text: "{ContractAccountID}"
+                                })
+                            });
+                        }
+                        else if (response.results.length === 0) {
+                            return MessageBox.success("There are no contract accounts with this business partner...");
+                        }
+                    },
+                    error: (oError) => {
+                        console.error("Error:", oError);
+                    }
+                });
+
+            }
+            else if (objType === "ISUPARTNER") {
+                let oComboBox = new sap.m.ComboBox();
+                oComboBox = this.byId("cmbobjKey");
+                let oPartnerModel = new sap.ui.model.json.JSONModel();
+                oPartnerModel.setData([{ "BusinessPartner": oBusinessPartner }], "BusinessPartners");
+                oComboBox.setModel(oPartnerModel);
+                oComboBox.bindAggregation("items", {
+                    path: "/",
+                    template: new sap.ui.core.Item({
+                        key: "{BusinessPartner}",
+                        text: "{BusinessPartner}"
+                    })
+                });
+            }
+        }
     });
 });

@@ -10,8 +10,8 @@
                 rows="{CustModel>/}" 
                 enableSelectAll="false"
                 selectionMode="Single" 
-                selectionBehavior="RowSelector"               
-                enableColumnFreeze="true" rowSelectionChange="onRowSelect">
+                selectionBehavior="RowSelector"           
+                enableColumnFreeze="true">
                 <extension>
                     <m:OverflowToolbar style="Clear">
                         <m:Title id="title" text="Customer Details"/>
@@ -20,7 +20,6 @@
 							id="btnCreate" text="Create"
 							press="onCreateRecord"/>
                         <m:Button
-                    icon="sap-icon://edit"
                     text="Edit"
                     press="handleActionPress"
                 />
