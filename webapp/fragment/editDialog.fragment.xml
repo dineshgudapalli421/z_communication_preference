@@ -14,7 +14,8 @@
 				<Label text="Object Type"/>
 				<Input
 					id="iduObjectType"
-					showSuggestion="true" editable="false" value="{/ObjectType}">
+					showSuggestion="true" editable="false" value="{= ${/ObjectType} === 'Account' ? 'Business Partner' : 'ContractAccount'}">
+					<!-- value="{/ObjectType}"-->
 				</Input>
 
 				<Label text="Object key"/>

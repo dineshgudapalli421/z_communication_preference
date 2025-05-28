@@ -28,44 +28,44 @@
                 <columns>
                     <Column
                         width="11rem">
-                        <m:Label text="Business Partner" textAlign="Center" width="100%"/>
+                        <m:Label text="Business Partner" textAlign="Begin" width="100%"/>
                         <template>
-                            <m:Text id="txtBP" text="{CustModel>AccountID}"/>
+                            <m:Text textAlign="Center" id="txtBP" text="{CustModel>AccountID}"/>
                         </template>
                     </Column>   
                     <Column
                         width="11rem">
-                        <m:Label text="Object Type" textAlign="Center" width="100%"/>
+                        <m:Label text="Object Type" textAlign="Begin" width="100%"/>
                         <template>
-                            <m:Text text="{= ${CustModel>EntitySet} === 'Account' ? 'Business Partner' : 'ContractAccount'}"/>
+                            <m:Text textAlign="Center" text="{= ${CustModel>EntitySet} === 'Account' ? 'Business Partner' : 'ContractAccount'}"/>
                         </template>
                     </Column>  
                     <Column
                         width="11rem">
-                        <m:Label text="Object Key" textAlign="Center" width="100%"/>
+                        <m:Label text="Object Key" textAlign="Begin" width="100%"/>
                         <template>
-                            <m:Text text="{CustModel>EntityKey}"/>
+                            <m:Text textAlign="Center" text="{CustModel>EntityKey}"/>
                         </template>
                     </Column> 
                     <Column
                         width="11rem">
-                        <m:Label text=" Correspondence Type" textAlign="Center" width="100%"/>
+                        <m:Label text=" Correspondence Type" textAlign="Begin" width="100%"/>
                         <template>
-                            <m:Text text="{CustModel>CorrespondenceTypeID}"/>
+                            <m:Text textAlign="Center" text="{CustModel>CorrespondenceTypeID}"/>
                         </template>
                     </Column> 
                     <Column
                         width="11rem">
-                        <m:Label text=" Correspondence Role" textAlign="Center" width="100%"/>
+                        <m:Label text=" Correspondence Role" textAlign="Begin" width="100%"/>
                         <template>
-                            <m:Text text="{CustModel>CommunicationCategoryID}"/>
+                            <m:Text textAlign="Center" text="{CustModel>CommunicationCategoryID}"/>
                         </template>
                     </Column>   
                     <Column
                         width="11rem">
-                        <m:Label text="Delivery Channel" textAlign="Center" width="100%"/>
+                        <m:Label text="Delivery Channel" textAlign="Begin" width="100%"/>
                         <template>
-                            <m:Text text="{CustModel>DeliveryChannelID}"/>
+                            <m:Text textAlign="Center" text="{CustModel>DeliveryChannelID}"/>
                         </template>
                     </Column> 
                     <Column

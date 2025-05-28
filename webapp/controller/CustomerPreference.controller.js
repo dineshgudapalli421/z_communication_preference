@@ -11,22 +11,31 @@ sap.ui.define([
     "sap/ui/table/RowSettings",
 ], (Controller, ODataModel, Filter, FilterOperator, JSONModel, MessageBox, Fragment, RowAction, RowActionItem, RowSettings) => {
     "use strict";
-
+    var oRouter, oController, oCommPrefModel, UIComponent;
     return Controller.extend("com.sap.lh.mr.zcommunicationpreference.controller.CustomerPreference", {
         onInit() {
+            oController = this;
+            UIComponent = oController.getOwnerComponent();
+            oCommPrefModel = oController.getOwnerComponent().getModel();
+            oRouter = UIComponent.getRouter();
             const oView = this.getView();
             oView.setModel(new JSONModel({
                 rowMode: "Fixed"
             }), "ui");
-            this.fragments = {};
+
         },
         onSearch: function () {
             const oView = this.getView();
+            var oTable = this.getView().byId("tblCommunicationPreference");
+            var oJsonModel = new sap.ui.model.json.JSONModel();
+
             var aFilter = [];
             const businessPartner = this.getView().byId("idBP").getValue();
             const contractAccount = this.getView().byId("idCA").getValue();
             const chkStatus = this.getView().byId("idStatus").getSelectedKey();
             if (businessPartner === "") {
+                oJsonModel.setData({});
+                oController.getView().byId("tblCommunicationPreference").setModel(oJsonModel, "CustModel");
                 return MessageBox.error("Business Partner is mandatory...");
             }
             aFilter.push(new Filter("AccountID", FilterOperator.EQ, businessPartner));
@@ -37,9 +46,6 @@ sap.ui.define([
             }
             var oModel = this.getOwnerComponent().getModel();
 
-            var oJsonModel = new sap.ui.model.json.JSONModel();
-            var oTable = this.getView().byId("tblCommunicationPreference");
-
             var oBusyDialog = new sap.m.BusyDialog({
                 title: "Loading Data",
                 text: "Please wait..."
@@ -49,13 +55,25 @@ sap.ui.define([
                 filters: aFilter,
                 success: function (response) {
                     oBusyDialog.close();
-                    oJsonModel.setData(response.results);
-                    oView.byId("tblCommunicationPreference").setModel(oJsonModel, "CustModel");
-                    oTable.clearSelection(true);
+                    if (response.results.length > 0) {
+                        oJsonModel.setData(response.results);
+                        oView.byId("tblCommunicationPreference").setModel(oJsonModel, "CustModel");
+                        oTable.clearSelection(true);
+                    }
+                    else if (response.results.length === 0) {
+                        oJsonModel.setData({});
+                        oView.byId("tblCommunicationPreference").setModel(oJsonModel);
+                        return MessageBox.error("There are no records with selection.")
+                    }
                 },
                 error: (oError) => {
                     oBusyDialog.close();
-                    console.error("Error:", oError);
+                    oJsonModel.setData({});
+                    oView.byId("tblCommunicationPreference").setModel(oJsonModel);
+                    var oResponseText = oError.responseText;
+                    var sParsedResponse = JSON.parse(oResponseText);
+                    const oMessage = sParsedResponse.error.message.value;
+                    return MessageBox.error(oMessage);
                 }
             });
 
@@ -127,13 +145,14 @@ sap.ui.define([
             let objectType = this.byId("idObjectType").getSelectedKey() ? this.byId("idObjectType").getSelectedItem().getText() : '';
             const objectKey = this.byId("cmbobjKey").getSelectedKey() ? this.byId("cmbobjKey").getSelectedItem().getText() : '';
             const correspType = this.byId("cmbCorrespType").getSelectedKey() ? this.byId("cmbCorrespType").getSelectedItem().getText() : '';
-            const correspRole = this.byId("idCorrespRole").getValue();
+            const correspRole = this.byId("idCorrespRole").getSelectedKey() ? this.byId("idCorrespRole").getSelectedItem().getText() : '';
             const deliveryChannel = this.byId("idDeliveryChannel").getSelectedKey() ? this.byId("idDeliveryChannel").getSelectedItem().getText() : '';
             // const deliveryAddress = this.byId("idDeliveryAddress").getValue();
             const status = this.byId("chkStatus").getSelected();
             if (!oBpartner) return MessageBox.error("Business Partner is mandatory...");
             if (!objectKey) return MessageBox.error("Object Key is mandatory...");
             if (!correspType) return MessageBox.error("Correspondence Type is mandatory...");
+            if (correspRole === "ZPLS" && objectType === "ISUPARTNER") return MessageBox.error("Object Type should be Account...");
             if (objectType === "ISUACCOUNT") {
                 objectType = "ContractAccount";
             }
@@ -159,6 +178,8 @@ sap.ui.define([
             oModel.update(sPath, objRequest, {
                 method: "PATCH",
                 success: function (response) {
+                    oController.onCancelCreateDialog();
+                    oController.getView().byId("application-Z_COM_PREFRENCE-change-component---CustomerPreference--filterbar-btnGo").firePress();
                     return MessageBox.success("Business Partner created successfully:", response);
                 },
                 error: function (error) {
@@ -170,12 +191,14 @@ sap.ui.define([
         onUpdateDialog: function (oEvent) {
             debugger;
             const oBpartner = this.byId("iduBp").getValue();
-            const objectType = this.byId("iduObjectType").getValue();
+            let objectType = this.byId("iduObjectType").getValue();
             const objectKey = this.byId("iduObjectKey").getValue();
             const correspType = this.byId("iduCorrespType").getValue();
             const correspRole = this.byId("iduCorrespRole").getValue();
             const deliveryChannel = this.byId("iduDeliveryChannel").getValue();
             const status = this.byId("chkUStatus").getSelected();
+
+            if (objectType === "Business Partner") objectType = "Account";
 
             let objRequest = {
                 "AccountID": oBpartner,
@@ -193,14 +216,17 @@ sap.ui.define([
             var sPath = "/ZCommunicationPreferences(AccountID='" + oBpartner + "')";
             oModel.update(sPath, objRequest, {
                 method: "PATCH",
-                success: function (data) {                    
-                    this.byId("application-Z_COM_PREFRENCE-change-component---CustomerPreference--filterbar-btnGo-BDI-content").firePress();
+                success: function (data) {
+                    debugger;
+                    oController.onCancelEditDialog();
+                    oController.getView().byId("application-Z_COM_PREFRENCE-change-component---CustomerPreference--filterbar-btnGo").firePress();
                     return MessageBox.success("Business Partner updated successfully:", data);
                 },
                 error: function (error) {
                     return MessageBox.error("Error updating business partner:", error);
                 }
             });
+
         },
 
         onRowSelect: async function (oEvent) {
