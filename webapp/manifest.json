@@ -25,6 +25,30 @@
                     "odataVersion": "2.0"
                 }
             }
+        },
+        "crossNavigation": {
+            "inbounds": {
+                "Z_COM_PREFRENCE-change": {
+                    "semanticObject": "Z_COM_PREFRENCE",
+                    "action": "change",
+                    "title": "Communication Preference",
+                    "signature": {
+                        "parameters": {
+                            "BusinessPartner":{
+                                "required":true
+                            },
+                            "ContractAccount":{
+                                "required": false
+                            }
+                        }
+                    },
+                    "resolutionResult":{
+                        "applicationType": "SAPUI5",
+                        "componentName": "",
+                        "url" : "/sap/bc/ui5_ui5/sap/Z_COM_PREFRENCE/"
+                    }
+                }
+            }
         }
     },
     "sap.ui": {

@@ -16,6 +16,16 @@ sap.ui.define([
             // call the base component's init function
             UIComponent.prototype.init.apply(this, arguments);
 
+            // var oComponentData = this.getComponentData();
+            // if (oComponentData && oComponentData.startupParameters) {
+            //     var businessPartner = oComponentData.startupParameters.BusinessPartner?.[0];
+            //     var contractAccount = oComponentData.startupParameters.ContractAccount?.[0];
+            //     var oModel = new sap.ui.model.json.JSONModel({
+            //         businessPartner: businessPartner,
+            //         contractAccount: contractAccount
+            //     });
+            //     this.setModel(oModel, "startup");
+            // }
             // set the device model
             this.setModel(models.createDeviceModel(), "device");
 

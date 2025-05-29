@@ -14,6 +14,7 @@ sap.ui.define([
     var oRouter, oController, oCommPrefModel, UIComponent;
     return Controller.extend("com.sap.lh.mr.zcommunicationpreference.controller.CustomerPreference", {
         onInit() {
+            debugger;
             oController = this;
             UIComponent = oController.getOwnerComponent();
             oCommPrefModel = oController.getOwnerComponent().getModel();
@@ -23,6 +24,22 @@ sap.ui.define([
                 rowMode: "Fixed"
             }), "ui");
 
+
+            oRouter.getRoute("RouteCustomerPreference").attachPatternMatched(this._onRouteMatched, oController);
+        },
+        _onRouteMatched: function (oEvent) {
+            debugger;
+            var oComponentData = UIComponent.getComponentData();
+            if (oComponentData && oComponentData.startupParameters) {
+                var oParams = oComponentData.startupParameters;
+                var businessPartner = oParams.BusinessPartner[0];
+                var contractAccount = oParams.ContractAccount[0];
+                oController.getView().byId("idBP").setValue(businessPartner);
+                if (contractAccount) {
+                    oController.getView().byId("idCA").setValue(contractAccount);
+                }
+                oController.getView().byId("application-Z_COM_PREFRENCE-change-component---CustomerPreference--filterbar-btnGo").firePress();
+            }
         },
         onSearch: function () {
             const oView = this.getView();
