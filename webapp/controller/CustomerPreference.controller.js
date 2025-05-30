@@ -24,7 +24,9 @@ sap.ui.define([
                 rowMode: "Fixed"
             }), "ui");
 
-
+            var user = sap.ushell.Container.getUser();
+            var userId = user.getId();
+            console.log(userId);
             oRouter.getRoute("RouteCustomerPreference").attachPatternMatched(this._onRouteMatched, oController);
         },
         _onRouteMatched: function (oEvent) {
@@ -155,6 +157,10 @@ sap.ui.define([
             this.oCreateDialog = undefined;
             //this.oCreateDialog.close();
 
+        },
+        onCancelViewDialog: function(oEvent){
+            this.oViewDialog.destroy();
+            this.oViewDialog = undefined;
         },
         onSubmitDialog: function (oEvent) {
             debugger;
@@ -299,6 +305,36 @@ sap.ui.define([
             }
 
         },
+        onViewRecord: async function (oEvent) {
+            var oTable = this.getView().byId("tblCommunicationPreference");
+            var rowID = oTable.getSelectedIndices();
+            if (rowID.length === 0) {
+                return MessageBox.error("Please select a row.");
+            }
+            else if (rowID.length > 0) {
+                var objRow = oTable.getContextByIndex(rowID).getModel().getData()[rowID];
+                var selectedData = {
+                    "AccountID": objRow.AccountID,
+                    "ObjectType": objRow.EntitySet,
+                    "ObjectKey": objRow.EntityKey,
+                    "CorreSpType": objRow.CorrespondenceTypeID,
+                    "CorreSpRole": objRow.CommunicationCategoryID,
+                    "DeliveryChannel": objRow.DeliveryChannelID,
+                    "DeliveryAddress": objRow.DeliveryAddress,
+                    "Status": objRow.Status
+                };
+                let oModel = new JSONModel();
+                oModel.setData(selectedData, "ViewModel");
+
+                this.oViewDialog ??= await this.loadFragment({
+                    name: "com.sap.lh.mr.zcommunicationpreference.fragment.viewDialog"
+                });
+                this.oViewDialog.open();
+                this.oViewDialog.setModel(oModel);
+            }
+
+        },
+
         getBusinessPartner() {
             var oTable = this.getView().byId("tblCommunicationPreference");
             var aSelectedIndices = oTable.getSelectedIndices();

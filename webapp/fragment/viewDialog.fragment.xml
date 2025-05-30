@@ -1,0 +1,53 @@
+<core:FragmentDefinition 
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form">
+	<Dialog id="viewDialog" title="Communication Preference" class="sapUiSmallMargin" afterClose=".closeDialog">
+		<content>
+		  <form:SimpleForm editable="true" id="idviewForm">
+				<Label text="Business Partner"/>
+				<Input
+					id="idvBp"
+					showSuggestion="true" editable="false" value="{/AccountID}">
+				</Input>
+
+				<Label text="Object Type"/>
+				<Input
+					id="idvObjectType"
+					showSuggestion="true" editable="false" value="{= ${/ObjectType} === 'Account' ? 'Business Partner' : 'ContractAccount'}">
+					<!-- value="{/ObjectType}"-->
+				</Input>
+
+				<Label text="Object key"/>
+				<Input
+					id="idvObjectKey"
+					showSuggestion="true" editable="false"  value="{/ObjectKey}">
+				</Input>
+
+				<Label text="Correspondence Type"/>
+				<Input
+					id="idvCorrespType"
+					showSuggestion="true"  editable="false" value="{/CorreSpType}">
+				</Input>
+				
+				<Label text="Correspondence Role"/>
+				<Input
+					id="idvCorrespRole"
+					showSuggestion="true"  editable="false" value="{/CorreSpRole}">
+				</Input>				
+
+				<Label text="Delivery Channel"/>
+				<Input
+					id="idvDeliveryChannel"
+					showSuggestion="true"  editable="false" value="{/DeliveryChannel}">
+				</Input>
+
+				<CheckBox id="chkvStatus" text="Status" selected="{= ${/Status} === true}" editable="false"/>
+                
+		  </form:SimpleForm>
+		</content>		
+		<buttons>
+		<Button id="btnVCancel" text="Cancel" press=".onCancelViewDialog" />
+		</buttons>
+	  </Dialog>
+</core:FragmentDefinition>

@@ -20,9 +20,13 @@
 							id="btnCreate" text="Create"
 							press="onCreateRecord"/>
                         <m:Button
-                    text="Edit"
-                    press="handleActionPress"
-                />
+                            text="Edit"
+                            press="handleActionPress"
+                        />
+                        <m:Button
+                            text="View"
+                            press="onViewRecord"
+                        />
                     </m:OverflowToolbar>
                 </extension>
                 <columns>
