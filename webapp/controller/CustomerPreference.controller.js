@@ -40,7 +40,9 @@ sap.ui.define([
                 if (contractAccount) {
                     oController.getView().byId("idCA").setValue(contractAccount);
                 }
-                oController.getView().byId("application-Z_COM_PREFRENCE-change-component---CustomerPreference--filterbar-btnGo").firePress();
+                if (businessPartner) {
+                    oController.getView().byId("application-Z_COM_PREFRENCE-change-component---CustomerPreference--filterbar-btnGo").firePress();
+                }
             }
         },
         onSearch: function () {
@@ -112,19 +114,24 @@ sap.ui.define([
             oCorrespTypeModel.read("/CorrespondenceTypes?$select=CorrespondenceTypeID,Description", {
                 success: function (response) {
                     if (response.results.length > 0) {
-                        var objCorrespndType = [];
-                        var uniqueData = that._removeDuplicates(response.results, "CorrespondenceTypeID");
-                        for (var i = 0; i < uniqueData.length; i++) {
-                            objCorrespndType.push({ "CorrespondenceTypeID": uniqueData[i] });
-                        }
+                        debugger;
+                        let track = {}
+                        let results = response.results.reduce((op, inp) => {
+                            if (!track[inp.CorrespondenceTypeID]) {
+                                op.push(inp)
+                                track[inp.CorrespondenceTypeID] = inp
+                            }
+                            return op
+                        }, [])
+
                         let odropdownModel = new sap.ui.model.json.JSONModel();
-                        odropdownModel.setData(objCorrespndType, "CorrespondTypes");
+                        odropdownModel.setData(results, "CorrespondTypes");
                         objComboBox.setModel(odropdownModel);
                         objComboBox.bindAggregation("items", {
                             path: "/",
                             template: new sap.ui.core.Item({
                                 key: "{CorrespondenceTypeID}",
-                                text: "{CorrespondenceTypeID}"
+                                text: "{Description}"
                             })
                         });
                     }
@@ -137,16 +144,6 @@ sap.ui.define([
                 }
             });
         },
-        _removeDuplicates: function (data, key) {
-            const uniqueData = data.reduce((acc, item) => {
-                const value = item[key];
-                if (!acc.includes(value)) {
-                    acc.push(value);
-                }
-                return acc;
-            }, []);
-            return uniqueData;
-        },
         onCancelEditDialog: function (oEvent) {
             this.oEditDialog.destroy();
             this.oEditDialog = undefined;
@@ -158,7 +155,7 @@ sap.ui.define([
             //this.oCreateDialog.close();
 
         },
-        onCancelViewDialog: function(oEvent){
+        onCancelViewDialog: function (oEvent) {
             this.oViewDialog.destroy();
             this.oViewDialog = undefined;
         },
@@ -167,8 +164,8 @@ sap.ui.define([
             const oBpartner = this.byId("idBp").getValue();
             let objectType = this.byId("idObjectType").getSelectedKey() ? this.byId("idObjectType").getSelectedItem().getText() : '';
             const objectKey = this.byId("cmbobjKey").getSelectedKey() ? this.byId("cmbobjKey").getSelectedItem().getText() : '';
-            const correspType = this.byId("cmbCorrespType").getSelectedKey() ? this.byId("cmbCorrespType").getSelectedItem().getText() : '';
-            const correspRole = this.byId("idCorrespRole").getSelectedKey() ? this.byId("idCorrespRole").getSelectedItem().getText() : '';
+            const correspType = this.byId("cmbCorrespType").getSelectedKey() ? this.byId("cmbCorrespType").getSelectedKey() : '';
+            const correspRole = this.byId("idCorrespRole").getSelectedKey() ? this.byId("idCorrespRole").getSelectedKey() : '';
             const deliveryChannel = this.byId("idDeliveryChannel").getSelectedKey() ? this.byId("idDeliveryChannel").getSelectedItem().getText() : '';
             // const deliveryAddress = this.byId("idDeliveryAddress").getValue();
             const status = this.byId("chkStatus").getSelected();
@@ -284,11 +281,22 @@ sap.ui.define([
             }
             else if (rowID.length > 0) {
                 var objRow = oTable.getContextByIndex(rowID).getModel().getData()[rowID];
+                let oCorrespTypeModel = this.getView().getModel();
+                let oCorrType = '';
+                oCorrespTypeModel.read("/CorrespondenceTypes('" + objRow.CorrespondenceTypeID + "')", {
+                    success: function (response) {
+                        oCorrType = response.Description;
+                    },
+                    error: (oError) => {
+                        console.error("Error:", oError);
+                    }
+                });
+
                 var selectedData = {
                     "AccountID": objRow.AccountID,
                     "ObjectType": objRow.EntitySet,
                     "ObjectKey": objRow.EntityKey,
-                    "CorreSpType": objRow.CorrespondenceTypeID,
+                    "CorreSpType": oCorrType,
                     "CorreSpRole": objRow.CommunicationCategoryID,
                     "DeliveryChannel": objRow.DeliveryChannelID,
                     "DeliveryAddress": objRow.DeliveryAddress,
