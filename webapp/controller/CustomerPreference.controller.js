@@ -11,7 +11,7 @@ sap.ui.define([
     "sap/ui/table/RowSettings",
 ], (Controller, ODataModel, Filter, FilterOperator, JSONModel, MessageBox, Fragment, RowAction, RowActionItem, RowSettings) => {
     "use strict";
-    var oRouter, oController, oCommPrefModel, UIComponent;
+    var oRouter, oController, oCommPrefModel, UIComponent, oCorrespTypeModel;
     return Controller.extend("com.sap.lh.mr.zcommunicationpreference.controller.CustomerPreference", {
         onInit() {
             debugger;
@@ -28,6 +28,34 @@ sap.ui.define([
             var userId = user.getId();
             console.log(userId);
             oRouter.getRoute("RouteCustomerPreference").attachPatternMatched(this._onRouteMatched, oController);
+            oController._fngetCorrespondenceModel();
+        },
+        _fngetCorrespondenceModel: function () {
+            oCommPrefModel.read("/CorrespondenceTypes?$select=CorrespondenceTypeID,Description", {
+                success: function (response) {
+                    if (response.results.length > 0) {
+                        debugger;
+                        let track = {}
+                        let results = response.results.reduce((op, inp) => {
+                            if (!track[inp.CorrespondenceTypeID]) {
+                                op.push(inp)
+                                track[inp.CorrespondenceTypeID] = inp
+                            }
+                            return op
+                        }, [])
+
+                        oCorrespTypeModel = new sap.ui.model.json.JSONModel();
+                        oCorrespTypeModel.setData([results], "CorrespondType");
+                    }
+                    else if (response.results.length === 0) {
+                        return MessageBox.error("There are no Corresponed Types exists...");
+                    }
+                },
+                error: (oError) => {
+                    console.error("Error:", oError);
+                }
+            });
+
         },
         _onRouteMatched: function (oEvent) {
             debugger;
@@ -214,17 +242,18 @@ sap.ui.define([
             let objectType = this.byId("iduObjectType").getValue();
             const objectKey = this.byId("iduObjectKey").getValue();
             const correspType = this.byId("iduCorrespType").getValue();
-            const correspRole = this.byId("iduCorrespRole").getValue();
+            let correspRole = this.byId("iduCorrespRole").getValue();
             const deliveryChannel = this.byId("iduDeliveryChannel").getValue();
             const status = this.byId("chkUStatus").getSelected();
+            const oCorrType = oController._fngetCorreType('Description', correspType);
 
             if (objectType === "Business Partner") objectType = "Account";
-
+            correspRole = correspRole === 'Business Contracts' ? 'COMM' : 'ZPLS';
             let objRequest = {
                 "AccountID": oBpartner,
                 "EntitySet": objectType,
                 "EntityKey": objectKey,
-                "CorrespondenceTypeID": correspType,
+                "CorrespondenceTypeID": oCorrType,
                 "CommunicationCategoryID": correspRole,
                 "PortalID": "",
                 "DeliveryChannelID": deliveryChannel,
@@ -273,6 +302,32 @@ sap.ui.define([
             this.oDialog.setModel(oModel);
         },
 
+        _fngetCorreType: function (keyType, correType) {
+            let oGetData = [];
+            for (var i = 0; i < oCorrespTypeModel.getData("CorrespondType")[0].length; i++) {
+                oGetData.push({ "CorrespID": oCorrespTypeModel.getData("CorrespondType")[0][i].CorrespondenceTypeID, "Description": oCorrespTypeModel.getData("CorrespondType")[0][i].Description });
+            }
+            var objData = oGetData.find(function (objData) {
+                if (keyType === "ID") {
+                    return objData.CorrespID === correType;
+                }
+                else if (keyType === "Description") {
+                    return objData.Description === correType;
+                }
+
+            });
+
+            let oCorrType = '';
+            if (keyType === "ID") {
+                oCorrType = objData.Description;
+            }
+            else if (keyType === "Description") {
+                oCorrType = objData.CorrespID;
+            }
+            return oCorrType;
+        },
+
+
         handleActionPress: async function (oEvent) {
             var oTable = this.getView().byId("tblCommunicationPreference");
             var rowID = oTable.getSelectedIndices();
@@ -280,24 +335,19 @@ sap.ui.define([
                 return MessageBox.error("Please select a row.");
             }
             else if (rowID.length > 0) {
+                debugger;
                 var objRow = oTable.getContextByIndex(rowID).getModel().getData()[rowID];
-                let oCorrespTypeModel = this.getView().getModel();
-                let oCorrType = '';
-                oCorrespTypeModel.read("/CorrespondenceTypes('" + objRow.CorrespondenceTypeID + "')", {
-                    success: function (response) {
-                        oCorrType = response.Description;
-                    },
-                    error: (oError) => {
-                        console.error("Error:", oError);
-                    }
-                });
+                const oCorrTypeId = objRow.CorrespondenceTypeID;
+                const oCorrType = oController._fngetCorreType('ID', oCorrTypeId);
+
+                let oCorreSpRole = objRow.CommunicationCategoryID === 'COMM' ? 'Business Contracts' : 'Paperless Billing';
 
                 var selectedData = {
                     "AccountID": objRow.AccountID,
                     "ObjectType": objRow.EntitySet,
                     "ObjectKey": objRow.EntityKey,
                     "CorreSpType": oCorrType,
-                    "CorreSpRole": objRow.CommunicationCategoryID,
+                    "CorreSpRole": oCorreSpRole,
                     "DeliveryChannel": objRow.DeliveryChannelID,
                     "DeliveryAddress": objRow.DeliveryAddress,
                     "Status": objRow.Status
@@ -309,6 +359,16 @@ sap.ui.define([
                     name: "com.sap.lh.mr.zcommunicationpreference.fragment.editDialog"
                 });
                 this.oEditDialog.open();
+                // let objComboBox = new sap.m.ComboBox();
+                // objComboBox = this.byId("iduCorrespType");
+                // objComboBox.setModel(oCorrespTypeModel.getData("CorrespondType"));
+                // objComboBox.bindAggregation("items", {
+                //     path: "/",
+                //     template: new sap.ui.core.Item({
+                //         key: "{CorrespondenceTypeID}",
+                //         text: "{Description}"
+                //     })
+                // });
                 this.oEditDialog.setModel(oModel);
             }
 
@@ -321,12 +381,16 @@ sap.ui.define([
             }
             else if (rowID.length > 0) {
                 var objRow = oTable.getContextByIndex(rowID).getModel().getData()[rowID];
+                const oCorrTypeId = objRow.CorrespondenceTypeID;
+                const oCorrType = oController._fngetCorreType('ID', oCorrTypeId);
+                let oCorreSpRole = objRow.CommunicationCategoryID === 'COMM' ? 'Business Contracts' : 'Paperless Billing';
+
                 var selectedData = {
                     "AccountID": objRow.AccountID,
                     "ObjectType": objRow.EntitySet,
                     "ObjectKey": objRow.EntityKey,
-                    "CorreSpType": objRow.CorrespondenceTypeID,
-                    "CorreSpRole": objRow.CommunicationCategoryID,
+                    "CorreSpType": oCorrType,
+                    "CorreSpRole": oCorreSpRole,
                     "DeliveryChannel": objRow.DeliveryChannelID,
                     "DeliveryAddress": objRow.DeliveryAddress,
                     "Status": objRow.Status
@@ -339,6 +403,7 @@ sap.ui.define([
                 });
                 this.oViewDialog.open();
                 this.oViewDialog.setModel(oModel);
+
             }
 
         },

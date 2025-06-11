@@ -30,8 +30,8 @@
 				
 				<Label text="Corresp. Role"/>				
 				<Select id="idCorrespRole">
-					<core:Item key="COMM" text="COMM" />
-					<core:Item key="ZPLS" text="ZPLS" />
+					<core:Item key="COMM" text="Business Contracts" />
+					<core:Item key="ZPLS" text="Paperless Billing" />
 				</Select>		
 
 				<Label text="Delivery Channel"/>

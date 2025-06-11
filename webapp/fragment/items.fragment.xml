@@ -62,7 +62,9 @@
                         width="11rem">
                         <m:Label text=" Correspondence Role" textAlign="Begin" width="100%"/>
                         <template>
-                            <m:Text textAlign="Center" text="{CustModel>CommunicationCategoryID}"/>
+                            <m:Text textAlign="Center" text="{= ${CustModel>CommunicationCategoryID} === 'COMM' ? 'Business Contracts' : 'Paperless Billing' }"/>
+                            <!-- <m:Text textAlign="Center" text="{CustModel>CommunicationCategoryID}"/> -->
+                            <!-- {= ${CustModel>Status} === true} -->
                         </template>
                     </Column>   
                     <Column

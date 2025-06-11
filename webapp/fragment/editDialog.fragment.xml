@@ -25,6 +25,9 @@
 				</Input>
 
 				<Label text="Correspondence Type"/>
+				<!-- <ComboBox id="iduCorrespType"
+					showClearIcon="true">					
+				</ComboBox>	 -->
 				<Input
 					id="iduCorrespType"
 					showSuggestion="true"  editable="false" value="{/CorreSpType}">
