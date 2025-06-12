@@ -1,137 +1,137 @@
 {
-    "_version": "1.60.0",
-    "sap.app": {
-        "id": "com.sap.lh.mr.zcommunicationpreference",
-        "type": "application",
-        "i18n": "i18n/i18n.properties",
-        "applicationVersion": {
-            "version": "0.0.1"
-        },
-        "title": "{{appTitle}}",
-        "description": "{{appDescription}}",
-        "resources": "resources.json",
-        "sourceTemplate": {
-            "id": "@sap/generator-fiori:basic",
-            "version": "1.16.5",
-            "toolsId": "b41cf615-fedf-4521-a954-82473abafc7b"
-        },
-        "dataSources": {
-            "mainService": {
-                "uri": "/sap/opu/odata/sap/ZCE_SS_ISU_UMC_SRV/",
-                "type": "OData",
-                "settings": {
-                    "annotations": [],
-                    "localUri": "localService/mainService/metadata.xml",
-                    "odataVersion": "2.0"
-                }
-            }
-        },
-        "crossNavigation": {
-            "inbounds": {
-                "Z_COM_PREFRENCE-change": {
-                    "semanticObject": "Z_COM_PREFRENCE",
-                    "action": "change",
-                    "title": "Communication Preference",
-                    "signature": {
-                        "parameters": {
-                            "BusinessPartner":{
-                                "required":true
-                            },
-                            "ContractAccount":{
-                                "required": false
-                            }
-                        }
-                    },
-                    "resolutionResult":{
-                        "applicationType": "SAPUI5",
-                        "componentName": "",
-                        "url" : "/sap/bc/ui5_ui5/sap/Z_COM_PREFRENCE/"
-                    }
-                }
-            }
-        }
+  "_version": "1.60.0",
+  "sap.app": {
+    "id": "com.sap.lh.mr.zcommunicationpreference",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
     },
-    "sap.ui": {
-        "technology": "UI5",
-        "icons": {
-            "icon": "",
-            "favIcon": "",
-            "phone": "",
-            "phone@2": "",
-            "tablet": "",
-            "tablet@2": ""
-        },
-        "deviceTypes": {
-            "desktop": true,
-            "tablet": true,
-            "phone": true
-        }
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:basic",
+      "version": "1.16.5",
+      "toolsId": "b41cf615-fedf-4521-a954-82473abafc7b"
     },
-    "sap.ui5": {
-        "flexEnabled": false,
-        "dependencies": {
-            "minUI5Version": "1.120.0",
-            "libs": {
-                "sap.m": {},
-                "sap.ui.core": {}
-            }
-        },
-        "contentDensities": {
-            "compact": true,
-            "cozy": true
-        },
-        "models": {
-            "i18n": {
-                "type": "sap.ui.model.resource.ResourceModel",
-                "settings": {
-                    "bundleName": "com.sap.lh.mr.zcommunicationpreference.i18n.i18n"
-                }
-            },
-            "": {
-                "dataSource": "mainService",
-                "preload": true,
-                "settings": {}
-            }
-        },
-        "resources": {
-            "css": [
-                {
-                    "uri": "css/style.css"
-                }
-            ]
-        },
-        "routing": {
-            "config": {
-                "routerClass": "sap.m.routing.Router",
-                "controlAggregation": "pages",
-                "controlId": "app",
-                "transition": "slide",
-                "type": "View",
-                "viewType": "XML",
-                "path": "com.sap.lh.mr.zcommunicationpreference.view",
-                "async": true,
-                "viewPath": "com.sap.lh.mr.zcommunicationpreference.view"
-            },
-            "routes": [
-                {
-                    "name": "RouteCustomerPreference",
-                    "pattern": ":?query:",
-                    "target": [
-                        "TargetCustomerPreference"
-                    ]
-                }
-            ],
-            "targets": {
-                "TargetCustomerPreference": {
-                    "id": "CustomerPreference",
-                    "name": "CustomerPreference"
-                }
-            }
-        },
-        "rootView": {
-            "viewName": "com.sap.lh.mr.zcommunicationpreference.view.App",
-            "type": "XML",
-            "id": "App"
+    "dataSources": {
+      "mainService": {
+        "uri": "/sap/opu/odata/sap/ZCE_SS_ISU_UMC_SRV/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/mainService/metadata.xml",
+          "odataVersion": "2.0"
         }
+      }
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "Z_COM_PREFRENCE-change": {
+          "semanticObject": "Z_COM_PREFRENCE",
+          "action": "change",
+          "title": "Communication Preference",
+          "signature": {
+            "parameters": {
+              "BusinessPartner": {
+                "required": true
+              },
+              "ContractAccount": {
+                "required": false
+              }
+            }
+          },
+          "resolutionResult": {
+            "applicationType": "SAPUI5",
+            "componentName": "",
+            "url": "/sap/bc/ui5_ui5/sap/Z_COM_PREFRENCE/"
+          }
+        }
+      }
     }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": false,
+    "dependencies": {
+      "minUI5Version": "1.120.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "com.sap.lh.mr.zcommunicationpreference.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {}
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css"
+        }
+      ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "transition": "slide",
+        "type": "View",
+        "viewType": "XML",
+        "path": "com.sap.lh.mr.zcommunicationpreference.view",
+        "async": true,
+        "viewPath": "com.sap.lh.mr.zcommunicationpreference.view"
+      },
+      "routes": [
+        {
+          "name": "RouteCustomerPreference",
+          "pattern": ":?query:",
+          "target": [
+            "TargetCustomerPreference"
+          ]
+        }
+      ],
+      "targets": {
+        "TargetCustomerPreference": {
+          "id": "CustomerPreference",
+          "name": "CustomerPreference"
+        }
+      }
+    },
+    "rootView": {
+      "viewName": "com.sap.lh.mr.zcommunicationpreference.view.App",
+      "type": "XML",
+      "id": "App"
+    }
+  }
 }

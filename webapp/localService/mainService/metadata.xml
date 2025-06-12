@@ -457,6 +457,10 @@
                 <Property Name="CoKey" Type="Edm.String" Nullable="false" MaxLength="36" sap:label="Correspond. Key" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="PortalID" Type="Edm.String" Nullable="false" MaxLength="2" sap:label="Component of the Version Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="DeliveryChannel" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Disp. Control" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Data1" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Data" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Data2" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Data" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Data3" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Data" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Data4" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Data" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <NavigationProperty Name="CorrespondenceTypes" Relationship="ERP_FICA_UMC.CorrespondenceType_Correspondence" FromRole="ToRole_CorrespondenceType_Correspondence" ToRole="FromRole_CorrespondenceType_Correspondence"/>
             </EntityType>
             <EntityType Name="AddressType" sap:content-version="1">
@@ -812,6 +816,7 @@
                 <Property Name="AddressInfo" Type="ERP_FICA_UMC.AddressInfo" Nullable="false"/>
                 <Property Name="PremiseTypeID" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="Premise type" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="PremiseID" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Premise" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="MoveoutEligible" Type="Edm.String" Nullable="false" MaxLength="1" sap:label="MoveOutEligible" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <NavigationProperty Name="Installations" Relationship="ERP_FICA_UMC.Premise_Installations" FromRole="FromRole_Premise_Installations" ToRole="ToRole_Premise_Installations"/>
                 <NavigationProperty Name="PremiseType" Relationship="ERP_FICA_UMC.PremiseType_Premises" FromRole="ToRole_PremiseType_Premises" ToRole="FromRole_PremiseType_Premises"/>
             </EntityType>
@@ -1159,6 +1164,7 @@
                 <Property Name="SupplierId" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Serv. Provider" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="BillingClass" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Billing Class" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="LegacyMID" Type="Edm.DateTime" Precision="7" sap:label="MID fr. legSys." sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="MoveOutScheduled" Type="Edm.String" Nullable="false" MaxLength="1" sap:label="Truth Value" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <NavigationProperty Name="ActivePaymentPlan" Relationship="ERP_FICA_UMC.Contract_ActivePaymentPlan" FromRole="FromRole_Contract_ActivePaymentPlan" ToRole="ToRole_Contract_ActivePaymentPlan"/>
                 <NavigationProperty Name="ContractConsumptionValues" Relationship="ERP_FICA_UMC.Contract_ContractConsumptionValues" FromRole="FromRole_Contract_ContractConsumptionValues" ToRole="ToRole_Contract_ContractConsumptionValues"/>
                 <NavigationProperty Name="ProfileValuesFiles" Relationship="ERP_FICA_UMC.Contract_ProfileValuesFiles" FromRole="FromRole_Contract_ProfileValuesFiles" ToRole="ToRole_Contract_ProfileValuesFiles"/>
@@ -1928,7 +1934,7 @@
                 <Property Name="LastName" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Last Name" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="PartnerType" Type="Edm.String" Nullable="false" MaxLength="1" sap:label="Partner Cat." sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="BuPartner" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Busn. Partner" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <Property Name="ContractAccount" Type="Edm.String" Nullable="false" MaxLength="12" sap:label="Contract Acct" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ContractAccount" Type="Edm.String" Nullable="false" MaxLength="12" sap:label="Contract Acct" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
                 <Property Name="Birthdate" Type="Edm.DateTime" Precision="7" sap:label="Date of Birth" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
                 <Property Name="BPIDType" Type="Edm.String" Nullable="false" MaxLength="6" sap:label="ID Type" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
                 <Property Name="IDNumber" Type="Edm.String" Nullable="false" MaxLength="60" sap:label="ID Number" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
@@ -1950,8 +1956,8 @@
                 <Property Name="Usageunit" Type="Edm.String" Nullable="false" MaxLength="3" sap:label="Billing MUnit" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:semantics="unit-of-measure"/>
                 <Property Name="Estimated" Type="Edm.Boolean" Nullable="false" sap:label="Boolean Variable (X = True, - = False, Space = Unknown)" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Noofunits" Type="Edm.Int32" Nullable="false" sap:label="INT4" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <NavigationProperty Name="UBfixedchargesSet" Relationship="ERP_FICA_UMC.UsageBreakdown_fixedcharges" FromRole="FromRole_UsageBreakdown_fixedcharges" ToRole="ToRole_UsageBreakdown_fixedcharges"/>
                 <NavigationProperty Name="UBusagechargesSet" Relationship="ERP_FICA_UMC.UsageBreakdown_usagecharges" FromRole="FromRole_UsageBreakdown_usagecharges" ToRole="ToRole_UsageBreakdown_usagecharges"/>
+                <NavigationProperty Name="UBfixedchargesSet" Relationship="ERP_FICA_UMC.UsageBreakdown_fixedcharges" FromRole="FromRole_UsageBreakdown_fixedcharges" ToRole="ToRole_UsageBreakdown_fixedcharges"/>
             </EntityType>
             <EntityType Name="UBfixedcharges" sap:content-version="1">
                 <Key>
@@ -2049,18 +2055,11 @@
                 <Property Name="ZzUnit" Type="Edm.String" Nullable="false" MaxLength="20" sap:label="Building Code" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="ZzSupplement" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Supplement" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
             </ComplexType>
-            <ComplexType Name="HousenoMoveinout">
-                <Property Name="Zzeligible" Type="Edm.String" Nullable="false" MaxLength="1" sap:label="Single-Character Flag" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <Property Name="Zzenergyservice" Type="Edm.String" Nullable="false" MaxLength="1" sap:label="Single-Character Flag" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <Property Name="Zzwwsservice" Type="Edm.String" Nullable="false" MaxLength="1" sap:label="Single-Character Flag" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-            </ComplexType>
             <ComplexType Name="HouseNofrmStreet">
                 <Property Name="Zzstreet" Type="Edm.String" Nullable="false" MaxLength="60" sap:label="Street" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Zzhouseno" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="House Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Zzunit" Type="Edm.String" Nullable="false" MaxLength="1" sap:label="Single-Character Flag" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Zzpremise" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Premise" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <Property Name="moveout" Type="ERP_FICA_UMC.HousenoMoveinout" Nullable="false"/>
-                <Property Name="movein" Type="ERP_FICA_UMC.HousenoMoveinout" Nullable="false"/>
             </ComplexType>
             <ComplexType Name="Zzmovein">
                 <Property Name="Zzeligible" Type="Edm.String" Nullable="false" MaxLength="1" sap:label="Single-Character Flag" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
@@ -2068,6 +2067,11 @@
                 <Property Name="Zzwwsservice" Type="Edm.String" Nullable="false" MaxLength="1" sap:label="Single-Character Flag" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
             </ComplexType>
             <ComplexType Name="Zzmoveout">
+                <Property Name="Zzeligible" Type="Edm.String" Nullable="false" MaxLength="1" sap:label="Single-Character Flag" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Zzenergyservice" Type="Edm.String" Nullable="false" MaxLength="1" sap:label="Single-Character Flag" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Zzwwsservice" Type="Edm.String" Nullable="false" MaxLength="1" sap:label="Single-Character Flag" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </ComplexType>
+            <ComplexType Name="HousenoMoveinout">
                 <Property Name="Zzeligible" Type="Edm.String" Nullable="false" MaxLength="1" sap:label="Single-Character Flag" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Zzenergyservice" Type="Edm.String" Nullable="false" MaxLength="1" sap:label="Single-Character Flag" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Zzwwsservice" Type="Edm.String" Nullable="false" MaxLength="1" sap:label="Single-Character Flag" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
@@ -2202,6 +2206,10 @@
                 <Property Name="Fireproteccharge" Type="Edm.Decimal" Nullable="false" Precision="10" Scale="4" sap:label="Quantity" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Customerassistancecharge" Type="Edm.Decimal" Nullable="false" Precision="10" Scale="4" sap:label="Quantity" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Stormwatercharge" Type="Edm.Decimal" Nullable="false" Precision="10" Scale="4" sap:label="Quantity" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </ComplexType>
+            <ComplexType Name="AccessInfo">
+                <Property Name="UserID" Type="Edm.String" Nullable="false" MaxLength="12" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="AccessType" Type="Edm.String" Nullable="false" MaxLength="1" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
             </ComplexType>
             <Association Name="IncomingAltPayerPaymentC_ContractAccount" sap:content-version="1">
                 <End Type="ERP_FICA_UMC.PaymentCard" Multiplicity="0..1" Role="FromRole_IncomingAltPayerPaymentC_ContractAccount"/>
@@ -5334,6 +5342,9 @@
                 </FunctionImport>
                 <FunctionImport Name="SimulateBudgetBilling" ReturnType="Collection(ERP_FICA_UMC.BudgetBillingPlan)" EntitySet="BudgetBillingPlans" m:HttpMethod="GET" sap:action-for="ERP_FICA_UMC.BudgetBillingPlan">
                     <Parameter Name="ContractAccountID" Type="Edm.String" Mode="In" MaxLength="12"/>
+                </FunctionImport>
+                <FunctionImport Name="GetAccessType" ReturnType="ERP_FICA_UMC.AccessInfo" m:HttpMethod="GET" sap:action-for="ERP_FICA_UMC.ZCommunicationPreference">
+                    <Parameter Name="UserID" Type="Edm.String" Mode="In" MaxLength="12"/>
                 </FunctionImport>
             </EntityContainer>
             <Annotation Term="Core.SchemaVersion" String="1.0.0" xmlns="http://docs.oasis-open.org/odata/ns/edm"/>

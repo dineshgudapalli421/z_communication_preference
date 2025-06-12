@@ -18,14 +18,14 @@
                         <m:ToolbarSpacer/>
                         <m:Button
 							id="btnCreate" text="Create"
-							press="onCreateRecord"/>
+							press="onCreateRecord" visible="{SelectionModel>/bCreateBtn}"/>
                         <m:Button
-                            text="Edit"
-                            press="handleActionPress"
+                            id="btnEdit" text="Edit"
+                            press="handleActionPress" visible="{SelectionModel>/bEditBtn}"
                         />
                         <m:Button
-                            text="View"
-                            press="onViewRecord"
+                            id="btnView" text="View"
+                            press="onViewRecord" visible="{SelectionModel>/bViewBtn}"
                         />
                     </m:OverflowToolbar>
                 </extension>

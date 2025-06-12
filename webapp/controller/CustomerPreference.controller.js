@@ -14,7 +14,6 @@ sap.ui.define([
     var oRouter, oController, oCommPrefModel, UIComponent, oCorrespTypeModel;
     return Controller.extend("com.sap.lh.mr.zcommunicationpreference.controller.CustomerPreference", {
         onInit() {
-            debugger;
             oController = this;
             UIComponent = oController.getOwnerComponent();
             oCommPrefModel = oController.getOwnerComponent().getModel();
@@ -25,16 +24,22 @@ sap.ui.define([
             }), "ui");
 
             var user = sap.ushell.Container.getUser();
-            var userId = user.getId();
-            console.log(userId);
+            var userId = user.getId(); //'TST_PR_CHNGE'
+            //console.log(userId);
             oRouter.getRoute("RouteCustomerPreference").attachPatternMatched(this._onRouteMatched, oController);
+             var oSelectionModel = new sap.ui.model.json.JSONModel({
+                bCreateBtn : false,
+                bEditBtn: false,
+                bViewBtn: false
+            });
+            oController.getView().setModel(oSelectionModel, "SelectionModel");
             oController._fngetCorrespondenceModel();
+            oController._fngetUserAuthorization(userId);
         },
         _fngetCorrespondenceModel: function () {
             oCommPrefModel.read("/CorrespondenceTypes?$select=CorrespondenceTypeID,Description", {
                 success: function (response) {
                     if (response.results.length > 0) {
-                        debugger;
                         let track = {}
                         let results = response.results.reduce((op, inp) => {
                             if (!track[inp.CorrespondenceTypeID]) {
@@ -55,7 +60,57 @@ sap.ui.define([
                     console.error("Error:", oError);
                 }
             });
+        },
+        _fngetUserAuthorization: function (userId) {
+            debugger;
+            var oModel = oController.getView().getModel("SelectionModel");
+            oCommPrefModel.callFunction("/GetAccessType", {
+                method: "GET",
+                urlParameters: {
+                    UserID: userId //"TST_PR_DISP"
+                },
+                success: function (oData, response) {
+                    debugger;
+                    const accessType = oData.GetAccessType.AccessType;
+                    var oCreate = oController.getView().byId("btnCreate");
+                    var oEdit = oController.getView().byId("btnEdit");
+                    var oView = oController.getView().byId("btnView");
+                    if (accessType === "C") {
+                        if(oCreate) oModel.setProperty("/bCreateBtn", true);
+                        if(oEdit) oModel.setProperty("/bEditBtn", true);
+                        if(oView) oModel.setProperty("/bViewBtn", false);
+                    }
+                    else if (accessType === "D") {
+                        if(oCreate) oModel.setProperty("/bCreateBtn", false);
+                        if(oEdit) oModel.setProperty("/bEditBtn", false);
+                        if(oView) oModel.setProperty("/bViewBtn", true);
+                    }
+                    else if (accessType === "N") {
+                        if(oCreate) oModel.setProperty("/bCreateBtn", false);
+                        if(oEdit) oModel.setProperty("/bEditBtn", false);
+                        if(oView) oModel.setProperty("/bViewBtn", false);
+                    }
+                },
+                error: function (error) {
 
+                    console.error("Error:", error);
+                }
+            });
+            // oCommPrefModel.read("/GetAccessType?UserID='TST_PR_CHNGE'", {
+            //     success: function (response) {
+            //         debugger;
+            //         if (response.results.length > 0) {
+            //             debugger;
+
+            //         }
+            //         else if (response.results.length === 0) {
+            //             return MessageBox.error("There are no Corresponed Types exists...");
+            //         }
+            //     },
+            //     error: (oError) => {
+            //         console.error("Error:", oError);
+            //     }
+            // });
         },
         _onRouteMatched: function (oEvent) {
             debugger;
