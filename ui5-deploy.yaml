@@ -20,6 +20,6 @@ builder:
           name: Z_COM_PREFRENCE
           description: Communication Preferences
           package: ZFIORI
-          transport: SDVK909788
+          transport: SDVK910965
         exclude:
           - /test/

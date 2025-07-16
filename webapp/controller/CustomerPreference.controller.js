@@ -22,13 +22,15 @@ sap.ui.define([
             oView.setModel(new JSONModel({
                 rowMode: "Fixed"
             }), "ui");
-
+            if (sap.ushell && sap.ushell.Container && sap.ushell.Container.getRenderer("fiori2")) {
+                sap.ushell.Container.getRenderer("fiori2").setHeaderVisibility(false, true);
+            }
             var user = sap.ushell.Container.getUser();
             var userId = user.getId(); //'TST_PR_CHNGE'
             //console.log(userId);
             oRouter.getRoute("RouteCustomerPreference").attachPatternMatched(this._onRouteMatched, oController);
-             var oSelectionModel = new sap.ui.model.json.JSONModel({
-                bCreateBtn : false,
+            var oSelectionModel = new sap.ui.model.json.JSONModel({
+                bCreateBtn: false,
                 bEditBtn: false,
                 bViewBtn: false
             });
@@ -76,19 +78,19 @@ sap.ui.define([
                     var oEdit = oController.getView().byId("btnEdit");
                     var oView = oController.getView().byId("btnView");
                     if (accessType === "C") {
-                        if(oCreate) oModel.setProperty("/bCreateBtn", true);
-                        if(oEdit) oModel.setProperty("/bEditBtn", true);
-                        if(oView) oModel.setProperty("/bViewBtn", false);
+                        if (oCreate) oModel.setProperty("/bCreateBtn", true);
+                        if (oEdit) oModel.setProperty("/bEditBtn", true);
+                        if (oView) oModel.setProperty("/bViewBtn", false);
                     }
                     else if (accessType === "D") {
-                        if(oCreate) oModel.setProperty("/bCreateBtn", false);
-                        if(oEdit) oModel.setProperty("/bEditBtn", false);
-                        if(oView) oModel.setProperty("/bViewBtn", true);
+                        if (oCreate) oModel.setProperty("/bCreateBtn", false);
+                        if (oEdit) oModel.setProperty("/bEditBtn", false);
+                        if (oView) oModel.setProperty("/bViewBtn", true);
                     }
                     else if (accessType === "N") {
-                        if(oCreate) oModel.setProperty("/bCreateBtn", false);
-                        if(oEdit) oModel.setProperty("/bEditBtn", false);
-                        if(oView) oModel.setProperty("/bViewBtn", false);
+                        if (oCreate) oModel.setProperty("/bCreateBtn", false);
+                        if (oEdit) oModel.setProperty("/bEditBtn", false);
+                        if (oView) oModel.setProperty("/bViewBtn", false);
                     }
                 },
                 error: function (error) {

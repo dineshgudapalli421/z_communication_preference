@@ -9,6 +9,7 @@
     <f:DynamicPage id="dynamicPageId"
             stickySubheaderProvider="iconTabBar"
             class="sapUiNoContentPadding"
+            headerExpanded="true"
             toggleHeaderOnTitleClick="{/titleClickable}">
             <f:header>
             <f:DynamicPageHeader
@@ -23,7 +24,7 @@
                 filterChange=".onFilterChange"
                 afterVariantLoad=".onAfterVariantLoad"
                 filterContainerWidth="13rem"
-                header="inLog" showClearOnFB="false"
+                showClearOnFB="false"
                 class="sapUiSmallMarginBottom"
             >
               <fb:filterGroupItems>                                            
@@ -62,8 +63,8 @@
                                     <fb:control>
                                         <!-- <CheckBox id="idStatus" text="Status" selected="false"></CheckBox> -->
                                         <Select id="idStatus" change=".onSearch">
-                                            <core:Item key="true" text="true" />
-                                            <core:Item key="false" text="false" />
+                                            <core:Item key="true" text="Active" />
+                                            <core:Item key="false" text="InActive" />
                                         </Select>
                                     </fb:control>
                                 </fb:FilterGroupItem>                                                               
