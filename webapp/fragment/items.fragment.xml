@@ -60,6 +60,13 @@
                     </Column> 
                     <Column
                         width="11rem">
+                        <m:Label text="Corr. Description" textAlign="Begin" width="100%"/>
+                        <template>
+                            <m:Text textAlign="Center" text="{CustModel>CorrespondenceDesc}"/>
+                        </template>
+                    </Column> 
+                    <Column
+                        width="11rem">
                         <m:Label text=" Correspondence Role" textAlign="Begin" width="100%"/>
                         <template>
                             <m:Text textAlign="Center" text="{= ${CustModel>CommunicationCategoryID} === 'COMM' ? 'Business Contracts' : 'Paperless Billing' }"/>

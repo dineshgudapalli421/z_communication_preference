@@ -162,7 +162,30 @@ sap.ui.define([
                 success: function (response) {
                     oBusyDialog.close();
                     if (response.results.length > 0) {
-                        oJsonModel.setData(response.results);
+                        var finalObject = [];
+                        var aResults = response.results;
+                        aResults.forEach(function (oCurrentObject) {
+                            const oCorrTypeId = oCurrentObject.CorrespondenceTypeID;
+                            let oCorrType = '';
+                            if (oCorrTypeId === "*") {
+                                oCorrType = 'ALL';
+                            }
+                            else {
+                                oCorrType = oController._fngetCorreType('ID', oCorrTypeId);
+                            }
+
+                            var internalObject = {
+                                "AccountID": oCurrentObject.AccountID,
+                                "EntitySet": oCurrentObject.EntitySet,
+                                "EntityKey": oCurrentObject.EntityKey,
+                                "CorrespondenceTypeID": oCurrentObject.CorrespondenceTypeID,
+                                "CorrespondenceDesc": oCorrType,
+                                "DeliveryChannelID": oCurrentObject.DeliveryChannelID,
+                                "Status": oCurrentObject.Status
+                            };
+                            finalObject.push(internalObject);
+                        });
+                        oJsonModel.setData(finalObject);
                         oView.byId("tblCommunicationPreference").setModel(oJsonModel, "CustModel");
                         oTable.clearSelection(true);
                     }
@@ -371,7 +394,6 @@ sap.ui.define([
                 else if (keyType === "Description") {
                     return objData.Description === correType;
                 }
-
             });
 
             let oCorrType = '';
@@ -383,8 +405,7 @@ sap.ui.define([
             }
             return oCorrType;
         },
-
-
+        
         handleActionPress: async function (oEvent) {
             var oTable = this.getView().byId("tblCommunicationPreference");
             var rowID = oTable.getSelectedIndices();
