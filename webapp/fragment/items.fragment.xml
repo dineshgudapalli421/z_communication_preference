@@ -4,7 +4,23 @@
     xmlns:c="sap.ui.core"
     xmlns:l="sap.ui.layout"
     xmlns:f="sap.ui.layout.form" 
+    xmlns:smarttable="sap.ui.comp.smarttable"
 >   
+<smarttable:SmartTable 
+                id="idCommunPrefSmartTable"
+                entitySet="CustomerDetails"
+                tableBindingPath="CustModel>/"
+                tableType="ResponsiveTable"
+                useVariantManagement="true"
+                useTablePersonalisation="true"
+                persistencyKey="CommPreferenceVariant"
+                header="Records"
+                showRowCount="true"
+                enableAutoBinding="true"
+                enableExport="false"
+                demandPopin="true"
+                requestAtLeastFields="AccountID,EntitySet,EntityKey,CorrespondenceTypeID,CorrespondenceDesc,DeliveryChannelID,Status,ValidFrom,ValidTo,CreatedBy,CreatedOn,UpdatedBy,UpdatedOn"
+            >
 <Table id="tblCommunicationPreference"
                 ariaLabelledBy="title"
                 rows="{CustModel>/}" 
@@ -31,43 +47,43 @@
                 </extension>
                 <columns>
                     <Column
-                        width="11rem">
-                        <m:Label text="Business Partner" textAlign="Begin" width="100%"/>
+                        width="11rem" hAlign="Center">
+                        <m:Label text="Business Partner" textAlign="Center" width="100%"/>
                         <template>
                             <m:Text textAlign="Center" id="txtBP" text="{CustModel>AccountID}"/>
                         </template>
                     </Column>   
                     <Column
-                        width="11rem">
-                        <m:Label text="Object Type" textAlign="Begin" width="100%"/>
+                        width="11rem" hAlign="Center">
+                        <m:Label text="Object Type" textAlign="Center" width="100%"/>
                         <template>
                             <m:Text textAlign="Center" text="{= ${CustModel>EntitySet} === 'Account' ? 'Business Partner' : 'ContractAccount'}"/>
                         </template>
                     </Column>  
                     <Column
-                        width="11rem">
-                        <m:Label text="Object Key" textAlign="Begin" width="100%"/>
+                        width="11rem" hAlign="Center">
+                        <m:Label text="Object Key" textAlign="Center" width="100%"/>
                         <template>
                             <m:Text textAlign="Center" text="{CustModel>EntityKey}"/>
                         </template>
                     </Column> 
                     <Column
-                        width="11rem">
-                        <m:Label text=" Correspondence Type" textAlign="Begin" width="100%"/>
+                        width="11rem" hAlign="Center">
+                        <m:Label text=" Correspondence Type" textAlign="Center" width="100%"/>
                         <template>
                             <m:Text textAlign="Center" text="{CustModel>CorrespondenceTypeID}"/>
                         </template>
                     </Column> 
                     <Column
-                        width="11rem">
-                        <m:Label text="Corr. Description" textAlign="Begin" width="100%"/>
+                        width="11rem" hAlign="Center">
+                        <m:Label text="Corr. Description" textAlign="Center" width="100%"/>
                         <template>
                             <m:Text textAlign="Center" text="{CustModel>CorrespondenceDesc}"/>
                         </template>
                     </Column> 
                     <Column
-                        width="11rem">
-                        <m:Label text=" Correspondence Role" textAlign="Begin" width="100%"/>
+                        width="11rem" hAlign="Center">
+                        <m:Label text=" Correspondence Role" textAlign="Center" width="100%"/>
                         <template>
                             <m:Text textAlign="Center" text="{= ${CustModel>CommunicationCategoryID} === 'COMM' ? 'Business Contracts' : 'Paperless Billing' }"/>
                             <!-- <m:Text textAlign="Center" text="{CustModel>CommunicationCategoryID}"/> -->
@@ -75,8 +91,8 @@
                         </template>
                     </Column>   
                     <Column
-                        width="11rem">
-                        <m:Label text="Delivery Channel" textAlign="Begin" width="100%"/>
+                        width="11rem" hAlign="Center">
+                        <m:Label text="Delivery Channel" textAlign="Center" width="100%"/>
                         <template>
                             <m:Text textAlign="Center" text="{CustModel>DeliveryChannelID}"/>
                         </template>
@@ -88,6 +104,49 @@
                             <m:CheckBox id="colStatus" textAlign="Center" editable="false" selected="{= ${CustModel>Status} === true}" />
                         </template>
                     </Column> 
+                    <Column
+                        width="11rem" hAlign="Center">
+                        <m:Label text="Valid From" textAlign="Center" width="100%"/>
+                        <template>
+                            <m:Text textAlign="Center" text="{CustModel>ValidFrom}"/>
+                        </template>
+                    </Column> 
+                    <Column
+                        width="11rem" hAlign="Center">
+                        <m:Label text="Valid To" textAlign="Center" width="100%"/>
+                        <template>
+                            <m:Text textAlign="Center" text="{CustModel>ValidTo}"/>
+                        </template>
+                    </Column> 
+                    <Column
+                        width="11rem" hAlign="Center">
+                        <m:Label text="Created By" textAlign="Center" width="100%"/>
+                        <template>
+                            <m:Text textAlign="Center" text="{CustModel>CreatedBy}"/>
+                        </template>
+                    </Column> 
+                    <Column
+                        width="11rem" hAlign="Center">
+                        <m:Label text="Created On" textAlign="Center" width="100%"/>
+                        <template>
+                            <m:Text textAlign="Center" text="{CustModel>CreatedOn}"/>
+                        </template>
+                    </Column>
+                    <Column
+                        width="11rem" hAlign="Center">
+                        <m:Label text="Updated By" textAlign="Center" width="100%"/>
+                        <template>
+                            <m:Text textAlign="Center" text="{CustModel>UpdatedBy}"/>
+                        </template>
+                    </Column> 
+                    <Column
+                        width="11rem" hAlign="Center">
+                        <m:Label text="Updated On" textAlign="Center" width="100%"/>
+                        <template>
+                            <m:Text textAlign="Center" text="{CustModel>UpdatedOn}"/>
+                        </template>
+                    </Column> 
                 </columns>
         </Table> 
+        </smarttable:SmartTable>
 </core:FragmentDefinition>

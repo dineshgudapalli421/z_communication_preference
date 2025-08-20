@@ -181,7 +181,13 @@ sap.ui.define([
                                 "CorrespondenceTypeID": oCurrentObject.CorrespondenceTypeID,
                                 "CorrespondenceDesc": oCorrType,
                                 "DeliveryChannelID": oCurrentObject.DeliveryChannelID,
-                                "Status": oCurrentObject.Status
+                                "Status": oCurrentObject.Status,
+                                "ValidFrom": oCurrentObject.ValidFrom,
+                                "ValidTo": oCurrentObject.ValidTo,
+                                "CreatedBy": oCurrentObject.CreatedBy,
+                                "CreatedOn": oCurrentObject.CreatedOn,
+                                "UpdatedOn": oCurrentObject.UpdatedOn,
+                                "UpdatedBy": oCurrentObject.UpdatedBy
                             };
                             finalObject.push(internalObject);
                         });
