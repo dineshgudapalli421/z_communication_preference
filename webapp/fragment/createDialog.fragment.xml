@@ -36,10 +36,11 @@
 
 				<Label text="Delivery Channel"/>
 				<Select id="idDeliveryChannel">
-					<core:Item key="EMAL" text="EMAL" />
+					<core:Item key="EMAL" text="EMAIL" />
 					<core:Item key="SMS" text="SMS" />
 					<core:Item key="IVR" text="IVR" />
 					<core:Item key="PUSH" text="PUSH" />
+					<core:Item key="LETT" text="LETTER" />
 				</Select>
 
 				<CheckBox id="chkStatus" text="Status" selected="true" />

@@ -9,7 +9,8 @@ sap.ui.define([
     "sap/ui/table/RowAction",
     "sap/ui/table/RowActionItem",
     "sap/ui/table/RowSettings",
-], (Controller, ODataModel, Filter, FilterOperator, JSONModel, MessageBox, Fragment, RowAction, RowActionItem, RowSettings) => {
+    "sap/ui/core/format/DateFormat"
+], (Controller, ODataModel, Filter, FilterOperator, JSONModel, MessageBox, Fragment, RowAction, RowActionItem, RowSettings, DateFormat) => {
     "use strict";
     var oRouter, oController, oCommPrefModel, UIComponent, oCorrespTypeModel;
     return Controller.extend("com.sap.lh.mr.zcommunicationpreference.controller.CustomerPreference", {
@@ -173,7 +174,14 @@ sap.ui.define([
                             else {
                                 oCorrType = oController._fngetCorreType('ID', oCorrTypeId);
                             }
-
+                            let oDeliveryChannel = '';
+                            if (oCurrentObject.DeliveryChannelID === 'EMAL') {
+                                oDeliveryChannel = 'EMAIL';
+                            } else if (oCurrentObject.DeliveryChannelID === 'LETT') {
+                                oDeliveryChannel = 'LETTER';
+                            } else {
+                                oDeliveryChannel = oCurrentObject.DeliveryChannelID;
+                            }
                             var internalObject = {
                                 "AccountID": oCurrentObject.AccountID,
                                 "EntitySet": oCurrentObject.EntitySet,
@@ -181,12 +189,13 @@ sap.ui.define([
                                 "CorrespondenceTypeID": oCurrentObject.CorrespondenceTypeID,
                                 "CorrespondenceDesc": oCorrType,
                                 "DeliveryChannelID": oCurrentObject.DeliveryChannelID,
+                                "DeliveryChannel": oDeliveryChannel,
                                 "Status": oCurrentObject.Status,
-                                "ValidFrom": oCurrentObject.ValidFrom,
-                                "ValidTo": oCurrentObject.ValidTo,
+                                "ValidFrom": oController._fngetDateFormat(oCurrentObject.ValidFrom),
+                                "ValidTo": oController._fngetDateFormat(oCurrentObject.ValidTo),
                                 "CreatedBy": oCurrentObject.CreatedBy,
-                                "CreatedOn": oCurrentObject.CreatedOn,
-                                "UpdatedOn": oCurrentObject.UpdatedOn,
+                                "CreatedOn": oController._fngetDateFormat(oCurrentObject.CreatedOn),
+                                "UpdatedOn": oController._fngetDateFormat(oCurrentObject.UpdatedOn),
                                 "UpdatedBy": oCurrentObject.UpdatedBy
                             };
                             finalObject.push(internalObject);
@@ -214,6 +223,15 @@ sap.ui.define([
 
             //this.switchState("Navigation");
 
+        },
+        _fngetDateFormat: function (strDate) {
+
+            var oDateFormat = DateFormat.getInstance({
+                UTC: false,
+                pattern: "YYYY-MM-dd"
+            });
+            var formatDate = oDateFormat.format(new Date(strDate));
+            return formatDate.toString();
         },
         onCreateRecord: async function () {
             var that = this;
@@ -329,10 +347,15 @@ sap.ui.define([
             const objectKey = this.byId("iduObjectKey").getValue();
             const correspType = this.byId("iduCorrespType").getValue();
             let correspRole = this.byId("iduCorrespRole").getValue();
-            const deliveryChannel = this.byId("iduDeliveryChannel").getValue();
+            let deliveryChannel = this.byId("iduDeliveryChannel").getValue();
             const status = this.byId("chkUStatus").getSelected();
             const oCorrType = oController._fngetCorreType('Description', correspType);
-
+            if (deliveryChannel === "EMAIL") {
+                deliveryChannel = "EMAL";
+            }
+            else if (deliveryChannel === "LETTER") {
+                deliveryChannel = "LETT";
+            }
             if (objectType === "Business Partner") objectType = "Account";
             correspRole = correspRole === 'Business Contracts' ? 'COMM' : 'ZPLS';
             let objRequest = {
@@ -403,15 +426,15 @@ sap.ui.define([
             });
 
             let oCorrType = '';
-            if (keyType === "ID") {
+            if (keyType === "ID" && objData !== undefined) {
                 oCorrType = objData.Description;
             }
-            else if (keyType === "Description") {
+            else if (keyType === "Description" && objData !== undefined) {
                 oCorrType = objData.CorrespID;
             }
             return oCorrType;
         },
-        
+
         handleActionPress: async function (oEvent) {
             var oTable = this.getView().byId("tblCommunicationPreference");
             var rowID = oTable.getSelectedIndices();

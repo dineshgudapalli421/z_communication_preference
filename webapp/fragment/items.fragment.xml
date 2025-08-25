@@ -19,7 +19,7 @@
                 enableAutoBinding="true"
                 enableExport="false"
                 demandPopin="true"
-                requestAtLeastFields="AccountID,EntitySet,EntityKey,CorrespondenceTypeID,CorrespondenceDesc,DeliveryChannelID,Status,ValidFrom,ValidTo,CreatedBy,CreatedOn,UpdatedBy,UpdatedOn"
+                requestAtLeastFields="AccountID,EntitySet,EntityKey,CorrespondenceTypeID,CorrespondenceDesc,DeliveryChannel,Status,ValidFrom,ValidTo,CreatedBy,CreatedOn,UpdatedBy,UpdatedOn"
             >
 <Table id="tblCommunicationPreference"
                 ariaLabelledBy="title"
@@ -90,11 +90,18 @@
                             <!-- {= ${CustModel>Status} === true} -->
                         </template>
                     </Column>   
-                    <Column
-                        width="11rem" hAlign="Center">
+                    <!-- <Column
+                        width="11rem" hAlign="Center" visible="false">
                         <m:Label text="Delivery Channel" textAlign="Center" width="100%"/>
                         <template>
                             <m:Text textAlign="Center" text="{CustModel>DeliveryChannelID}"/>
+                        </template>
+                    </Column>  -->
+                     <Column
+                        width="11rem" hAlign="Center">
+                        <m:Label text="Delivery Channel" textAlign="Center" width="100%"/>
+                        <template>
+                            <m:Text textAlign="Center" text="{CustModel>DeliveryChannel}"/>
                         </template>
                     </Column> 
                     <Column
