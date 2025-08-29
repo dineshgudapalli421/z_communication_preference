@@ -228,7 +228,7 @@ sap.ui.define([
 
             var oDateFormat = DateFormat.getInstance({
                 UTC: false,
-                pattern: "YYYY-MM-dd"
+                pattern: "yyyy-MM-dd"
             });
             var formatDate = oDateFormat.format(new Date(strDate));
             return formatDate.toString();
