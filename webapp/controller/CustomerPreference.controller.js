@@ -188,14 +188,15 @@ sap.ui.define([
                                 "EntityKey": oCurrentObject.EntityKey,
                                 "CorrespondenceTypeID": oCurrentObject.CorrespondenceTypeID,
                                 "CorrespondenceDesc": oCorrType,
+                                "CommunicationCategoryID": oCurrentObject.CommunicationCategoryID,
                                 "DeliveryChannelID": oCurrentObject.DeliveryChannelID,
                                 "DeliveryChannel": oDeliveryChannel,
                                 "Status": oCurrentObject.Status,
-                                "ValidFrom": oController._fngetDateFormat(oCurrentObject.ValidFrom),
-                                "ValidTo": oController._fngetDateFormat(oCurrentObject.ValidTo),
+                                "ValidFrom": oCurrentObject.ValidFrom,//oController._fngetDateFormat(oCurrentObject.ValidFrom),
+                                "ValidTo": oCurrentObject.ValidTo,//oController._fngetDateFormat(oCurrentObject.ValidTo),
                                 "CreatedBy": oCurrentObject.CreatedBy,
-                                "CreatedOn": oController._fngetDateFormat(oCurrentObject.CreatedOn),
-                                "UpdatedOn": oController._fngetDateFormat(oCurrentObject.UpdatedOn),
+                                "CreatedOn": oCurrentObject.CreatedOn,//oController._fngetDateFormat(oCurrentObject.CreatedOn),
+                                "UpdatedOn": oCurrentObject.UpdatedOn,//oController._fngetDateFormat(oCurrentObject.UpdatedOn),
                                 "UpdatedBy": oCurrentObject.UpdatedBy
                             };
                             finalObject.push(internalObject);
@@ -349,7 +350,7 @@ sap.ui.define([
             let correspRole = this.byId("iduCorrespRole").getValue();
             let deliveryChannel = this.byId("iduDeliveryChannel").getValue();
             const status = this.byId("chkUStatus").getSelected();
-            const oCorrType = oController._fngetCorreType('Description', correspType);
+            const oCorrType = correspType === 'ALL' ? '*' : oController._fngetCorreType('Description', correspType);
             if (deliveryChannel === "EMAIL") {
                 deliveryChannel = "EMAL";
             }
@@ -445,7 +446,7 @@ sap.ui.define([
                 debugger;
                 var objRow = oTable.getContextByIndex(rowID).getModel().getData()[rowID];
                 const oCorrTypeId = objRow.CorrespondenceTypeID;
-                const oCorrType = oController._fngetCorreType('ID', oCorrTypeId);
+                const oCorrType = oCorrTypeId === '*' ? 'ALL' : oController._fngetCorreType('ID', oCorrTypeId);
 
                 let oCorreSpRole = objRow.CommunicationCategoryID === 'COMM' ? 'Business Contracts' : 'Paperless Billing';
 
@@ -489,7 +490,7 @@ sap.ui.define([
             else if (rowID.length > 0) {
                 var objRow = oTable.getContextByIndex(rowID).getModel().getData()[rowID];
                 const oCorrTypeId = objRow.CorrespondenceTypeID;
-                const oCorrType = oController._fngetCorreType('ID', oCorrTypeId);
+                const oCorrType = oCorrTypeId === '*' ? 'ALL' : oController._fngetCorreType('ID', oCorrTypeId);
                 let oCorreSpRole = objRow.CommunicationCategoryID === 'COMM' ? 'Business Contracts' : 'Paperless Billing';
 
                 var selectedData = {
