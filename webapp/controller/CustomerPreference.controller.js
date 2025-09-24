@@ -299,7 +299,7 @@ sap.ui.define([
             const objectKey = this.byId("cmbobjKey").getSelectedKey() ? this.byId("cmbobjKey").getSelectedItem().getText() : '';
             const correspType = this.byId("cmbCorrespType").getSelectedKey() ? this.byId("cmbCorrespType").getSelectedKey() : '';
             const correspRole = this.byId("idCorrespRole").getSelectedKey() ? this.byId("idCorrespRole").getSelectedKey() : '';
-            const deliveryChannel = this.byId("idDeliveryChannel").getSelectedKey() ? this.byId("idDeliveryChannel").getSelectedItem().getText() : '';
+            const deliveryChannel = this.byId("idDeliveryChannel").getSelectedKey() ? this.byId("idDeliveryChannel").getSelectedKey() : '';
             // const deliveryAddress = this.byId("idDeliveryAddress").getValue();
             const status = this.byId("chkStatus").getSelected();
             if (!oBpartner) return MessageBox.error("Business Partner is mandatory...");
