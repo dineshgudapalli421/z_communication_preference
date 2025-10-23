@@ -40,6 +40,7 @@ sap.ui.define([
             oController._fngetUserAuthorization(userId);
         },
         _fngetCorrespondenceModel: function () {
+            debugger;
             oCommPrefModel.read("/CorrespondenceTypes?$select=CorrespondenceTypeID,Description", {
                 success: function (response) {
                     if (response.results.length > 0) {
@@ -235,12 +236,12 @@ sap.ui.define([
             return formatDate.toString();
         },
         onCreateRecord: async function () {
+            debugger;
             var that = this;
             this.oCreateDialog ??= await this.loadFragment({
                 name: "com.sap.lh.mr.zcommunicationpreference.fragment.createDialog"
             });
             this.oCreateDialog.open();
-
             let objComboBox = new sap.m.ComboBox();
             objComboBox = this.byId("cmbCorrespType");
             let oCorrespTypeModel = this.getView().getModel();
@@ -250,12 +251,12 @@ sap.ui.define([
                         debugger;
                         let track = {}
                         let results = response.results.reduce((op, inp) => {
-                            if (!track[inp.CorrespondenceTypeID]) {
+                            if (!track[inp.CorrespondenceTypeID] && inp.RegFlag === '') {
                                 op.push(inp)
                                 track[inp.CorrespondenceTypeID] = inp
                             }
                             return op
-                        }, [])
+                        }, []);
 
                         let odropdownModel = new sap.ui.model.json.JSONModel();
                         odropdownModel.setData(results, "CorrespondTypes");
