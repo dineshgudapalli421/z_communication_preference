@@ -265,7 +265,7 @@ sap.ui.define([
                             path: "/",
                             template: new sap.ui.core.Item({
                                 key: "{CorrespondenceTypeID}",
-                                text: "{Description}"
+                                text: "{Description}" + "_" + "{CorrespondenceTypeID}"
                             })
                         });
                     }

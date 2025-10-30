@@ -25,7 +25,7 @@
 
 				<Label text="Corresp. Type"/>
 				<ComboBox id="cmbCorrespType"
-					showClearIcon="true">					
+					showClearIcon="true" >					
 				</ComboBox>					
 				
 				<Label text="Corresp. Role"/>				
