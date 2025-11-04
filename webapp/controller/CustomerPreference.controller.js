@@ -336,8 +336,18 @@ sap.ui.define([
                     oController.getView().byId("application-Z_COM_PREFRENCE-change-component---CustomerPreference--filterbar-btnGo").firePress();
                     return MessageBox.success("Business Partner created successfully:", response);
                 },
-                error: function (error) {
-                    return MessageBox.error("Error when create business partner:", error);
+                error: function (oError) {
+                    var oMessage;
+                    if (oError.responseText.startsWith("<")) {
+                        var parser = new DOMParser();
+                        var xmlDoc = parser.parseFromString(oError.responseText, "text/xml");
+                        oMessage = xmlDoc.getElementsByTagName("message")[0].childNodes[0].nodeValue;
+                    } else {
+                        var oResponseText = oError.responseText;
+                        var sParsedResponse = JSON.parse(oResponseText);
+                        oMessage = sParsedResponse.error.message.value;
+                    }
+                    return MessageBox.error(oMessage);
                 }
             });
         },
@@ -382,11 +392,20 @@ sap.ui.define([
                     oController.getView().byId("application-Z_COM_PREFRENCE-change-component---CustomerPreference--filterbar-btnGo").firePress();
                     return MessageBox.success("Business Partner updated successfully:", data);
                 },
-                error: function (error) {
-                    return MessageBox.error("Error updating business partner:", error);
+                error: function (oError) {
+                    var oMessage;
+                    if (oError.responseText.startsWith("<")) {
+                        var parser = new DOMParser();
+                        var xmlDoc = parser.parseFromString(oError.responseText, "text/xml");
+                        oMessage = xmlDoc.getElementsByTagName("message")[0].childNodes[0].nodeValue;
+                    } else {
+                        var oResponseText = oError.responseText;
+                        var sParsedResponse = JSON.parse(oResponseText);
+                        oMessage = sParsedResponse.error.message.value;
+                    }
+                    return MessageBox.error(oMessage);
                 }
             });
-
         },
 
         onRowSelect: async function (oEvent) {
