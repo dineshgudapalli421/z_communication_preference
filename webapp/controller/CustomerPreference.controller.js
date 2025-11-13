@@ -208,14 +208,15 @@ sap.ui.define([
                     }
                     else if (response.results.length === 0) {
                         oJsonModel.setData({});
-                        oView.byId("tblCommunicationPreference").setModel(oJsonModel);
+                        oView.byId("tblCommunicationPreference").setModel(oJsonModel, "CustModel");
                         return MessageBox.error("There are no records with selection.")
                     }
                 },
                 error: (oError) => {
                     oBusyDialog.close();
                     oJsonModel.setData({});
-                    oView.byId("tblCommunicationPreference").setModel(oJsonModel);
+                    oView.byId("tblCommunicationPreference").setModel(oJsonModel, "CustModel");
+                    oTable.clearSelection(true);
                     var oResponseText = oError.responseText;
                     var sParsedResponse = JSON.parse(oResponseText);
                     const oMessage = sParsedResponse.error.message.value;
@@ -251,6 +252,7 @@ sap.ui.define([
                         debugger;
                         let track = {}
                         let results = response.results.reduce((op, inp) => {
+                            //if (!track[inp.CorrespondenceTypeID] && inp.RegFlag === '')
                             if (!track[inp.CorrespondenceTypeID] && inp.RegFlag === '') {
                                 op.push(inp)
                                 track[inp.CorrespondenceTypeID] = inp
@@ -260,6 +262,7 @@ sap.ui.define([
 
                         let odropdownModel = new sap.ui.model.json.JSONModel();
                         odropdownModel.setData(results, "CorrespondTypes");
+                        odropdownModel.setSizeLimit(300);
                         objComboBox.setModel(odropdownModel);
                         objComboBox.bindAggregation("items", {
                             path: "/",
@@ -305,7 +308,7 @@ sap.ui.define([
             const status = this.byId("chkStatus").getSelected();
             if (!oBpartner) return MessageBox.error("Business Partner is mandatory...");
             if (!objectKey) return MessageBox.error("Object Key is mandatory...");
-            if (!correspType) return MessageBox.error("Correspondence Type is mandatory...");
+            if (!correspType && correspRole !== "ZPLS") return MessageBox.error("Correspondence Type is mandatory...");
             if (correspRole === "ZPLS" && objectType === "ISUPARTNER") return MessageBox.error("Object Type should be Account...");
             if (objectType === "ISUACCOUNT") {
                 objectType = "ContractAccount";
@@ -334,7 +337,7 @@ sap.ui.define([
                 success: function (response) {
                     oController.onCancelCreateDialog();
                     oController.getView().byId("application-Z_COM_PREFRENCE-change-component---CustomerPreference--filterbar-btnGo").firePress();
-                    return MessageBox.success("Business Partner created successfully:", response);
+                    return MessageBox.success("Communication Preference Created Successfully.", response);
                 },
                 error: function (oError) {
                     var oMessage;
@@ -390,7 +393,7 @@ sap.ui.define([
                     debugger;
                     oController.onCancelEditDialog();
                     oController.getView().byId("application-Z_COM_PREFRENCE-change-component---CustomerPreference--filterbar-btnGo").firePress();
-                    return MessageBox.success("Business Partner updated successfully:", data);
+                    return MessageBox.success("Communication Preference updated successfully", data);
                 },
                 error: function (oError) {
                     var oMessage;
