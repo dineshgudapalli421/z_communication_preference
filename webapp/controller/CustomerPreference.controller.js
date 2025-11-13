@@ -588,7 +588,17 @@ sap.ui.define([
                             });
                         }
                         else if (response.results.length === 0) {
-                            return MessageBox.success("There are no contract accounts with this business partner...");
+                            let oPartnerModel = new sap.ui.model.json.JSONModel();
+                            oPartnerModel.setData([{ "BusinessPartner": '' }], "BusinessPartners");
+                            oComboBox.setModel(oPartnerModel);
+                            oComboBox.bindAggregation("items", {
+                                path: "/",
+                                template: new sap.ui.core.Item({
+                                    key: "{BusinessPartner}",
+                                    text: "{BusinessPartner}"
+                                })
+                            });
+                            return MessageBox.error("There are no contract accounts with this business partner");
                         }
                     },
                     error: (oError) => {
@@ -638,7 +648,17 @@ sap.ui.define([
                             });
                         }
                         else if (response.results.length === 0) {
-                            return MessageBox.success("There are no contract accounts with this business partner...");
+                            let oPartnerModel = new sap.ui.model.json.JSONModel();
+                            oPartnerModel.setData([{ "BusinessPartner": '' }], "BusinessPartners");
+                            oComboBox.setModel(oPartnerModel);
+                            oComboBox.bindAggregation("items", {
+                                path: "/",
+                                template: new sap.ui.core.Item({
+                                    key: "{BusinessPartner}",
+                                    text: "{BusinessPartner}"
+                                })
+                            });
+                            return MessageBox.error("There are no contract accounts with this business partner");
                         }
                     },
                     error: (oError) => {
