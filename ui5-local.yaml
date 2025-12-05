@@ -33,6 +33,9 @@ server:
           - path: /sap
             url: http://sapsdvapp.aws.londonhydro.cloud:8000
             client: '200'
+          - url: http://sapsdvapp.aws.londonhydro.cloud:8000/
+            client: '200'
+            path: /sap/opu/odata/SAP/ERP_ISU_UMC/
     - name: sap-fe-mockserver
       beforeMiddleware: csp
       configuration:
@@ -41,5 +44,9 @@ server:
           - urlPath: /sap/opu/odata/sap/ZCE_SS_ISU_UMC_SRV
             metadataPath: ./webapp/localService/mainService/metadata.xml
             mockdataPath: ./webapp/localService/mainService/data
+            generateMockData: true
+          - urlPath: /sap/opu/odata/SAP/ERP_ISU_UMC
+            metadataPath: ./webapp/localService/ERP_ISU_UMC/metadata.xml
+            mockdataPath: ./webapp/localService/ERP_ISU_UMC/data
             generateMockData: true
         annotations: []

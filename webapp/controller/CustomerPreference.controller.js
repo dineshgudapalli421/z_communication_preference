@@ -12,12 +12,13 @@ sap.ui.define([
     "sap/ui/core/format/DateFormat"
 ], (Controller, ODataModel, Filter, FilterOperator, JSONModel, MessageBox, Fragment, RowAction, RowActionItem, RowSettings, DateFormat) => {
     "use strict";
-    var oRouter, oController, oCommPrefModel, UIComponent, oCorrespTypeModel;
+    var oRouter, oController, oCommPrefModel, UIComponent, oCorrespTypeModel, oContractModel;
     return Controller.extend("com.sap.lh.mr.zcommunicationpreference.controller.CustomerPreference", {
         onInit() {
             oController = this;
             UIComponent = oController.getOwnerComponent();
             oCommPrefModel = oController.getOwnerComponent().getModel();
+            oContractModel = oController.getOwnerComponent().getModel("ERP_ISU_UMC");
             oRouter = UIComponent.getRouter();
             const oView = this.getView();
             oView.setModel(new JSONModel({
@@ -26,6 +27,10 @@ sap.ui.define([
             if (sap.ushell && sap.ushell.Container && sap.ushell.Container.getRenderer("fiori2")) {
                 sap.ushell.Container.getRenderer("fiori2").setHeaderVisibility(false, true);
             }
+            var oAccountModel = new JSONModel({
+                ContractsList: []
+            });
+            oController.getView().setModel(oAccountModel, "ContractModel");
             var user = sap.ushell.Container.getUser();
             var userId = user.getId(); //'TST_PR_CHNGE'
             //console.log(userId);
@@ -300,7 +305,7 @@ sap.ui.define([
             debugger;
             const oBpartner = this.byId("idBp").getValue();
             let objectType = this.byId("idObjectType").getSelectedKey() ? this.byId("idObjectType").getSelectedItem().getText() : '';
-            const objectKey = this.byId("cmbobjKey").getSelectedKey() ? this.byId("cmbobjKey").getSelectedItem().getText() : '';
+            const objectKey = this.byId("inputobjKey").getValue(); //this.byId("cmbobjKey").getSelectedKey() ? this.byId("cmbobjKey").getSelectedItem().getText() : '';
             const correspType = this.byId("cmbCorrespType").getSelectedKey() ? this.byId("cmbCorrespType").getSelectedKey() : '';
             const correspRole = this.byId("idCorrespRole").getSelectedKey() ? this.byId("idCorrespRole").getSelectedKey() : '';
             const deliveryChannel = this.byId("idDeliveryChannel").getSelectedKey() ? this.byId("idDeliveryChannel").getSelectedKey() : '';
@@ -570,82 +575,168 @@ sap.ui.define([
             }
             const objType = this.byId("idObjectType").getSelectedItem().getText();
             if (objType === "ISUACCOUNT") {
-                let oComboBox = new sap.m.ComboBox();
-                oComboBox = this.byId("cmbobjKey");
-                let oContractModel = this.getView().getModel();
-                oContractModel.read("/Accounts(AccountID='" + oBusinessPartner + "')/ContractAccounts", {
-                    success: function (response) {
-                        if (response.results.length > 0) {
-                            var odropdownModel = new sap.ui.model.json.JSONModel();
-                            odropdownModel.setData(response.results, "ContractAccounts");
-                            oComboBox.setModel(odropdownModel);
-                            oComboBox.bindAggregation("items", {
-                                path: "/",
-                                template: new sap.ui.core.Item({
-                                    key: "{ContractAccountID}",
-                                    text: "{ContractAccountID}"
-                                })
-                            });
-                        }
-                        else if (response.results.length === 0) {
-                            let oPartnerModel = new sap.ui.model.json.JSONModel();
-                            oPartnerModel.setData([{ "BusinessPartner": '' }], "BusinessPartners");
-                            oComboBox.setModel(oPartnerModel);
-                            oComboBox.bindAggregation("items", {
-                                path: "/",
-                                template: new sap.ui.core.Item({
-                                    key: "{BusinessPartner}",
-                                    text: "{BusinessPartner}"
-                                })
-                            });
-                            return MessageBox.error("There are no contract accounts with this business partner");
-                        }
-                    },
-                    error: (oError) => {
-                        console.error("Error:", oError);
-                    }
-                });
+                let oInput = new sap.m.Input();
+                oInput = this.byId("inputobjKey");
+                oInput.setValue("");
+                // oContractModel.read("/Accounts('" + oBusinessPartner + "')/ContractAccounts",
+                //     {
+                //         urlParameters: {
+                //             "$select": "ContractAccountID" // Comma-separated list of properties
+                //         },
+                //         success: function (response) {
+                //             if (response.results.length > 0) {
+                //                 var odropdownModel = new sap.ui.model.json.JSONModel();
+                //                 odropdownModel.setData(response.results, "ContractAccounts");
+                //                 odropdownModel.setSizeLimit(300);
+                //                 oComboBox.setModel(odropdownModel);
+                //                 oComboBox.bindAggregation("items", {
+                //                     path: "/",
+                //                     template: new sap.ui.core.Item({
+                //                         key: "{ContractAccountID}",
+                //                         text: "{ContractAccountID}"
+                //                     })
+                //                 });
+                //             }
+                //             else if (response.results.length === 0) {
+                //                 let oPartnerModel = new sap.ui.model.json.JSONModel();
+                //                 oPartnerModel.setData([{ "BusinessPartner": '' }], "BusinessPartners");
+                //                 oComboBox.setModel(oPartnerModel);
+                //                 oComboBox.bindAggregation("items", {
+                //                     path: "/",
+                //                     template: new sap.ui.core.Item({
+                //                         key: "{BusinessPartner}",
+                //                         text: "{BusinessPartner}"
+                //                     })
+                //                 });
+                //                 return MessageBox.error("There are no contract accounts with this business partner");
+                //             }
+                //         },
+                //         error: (oError) => {
+                //             console.error("Error:", oError);
+                //         }
+                //     });
 
             }
-            else if (objType === "ISUPARTNER") {
-                let oComboBox = new sap.m.ComboBox();
-                oComboBox = this.byId("cmbobjKey");
-                let oPartnerModel = new sap.ui.model.json.JSONModel();
-                oPartnerModel.setData([{ "BusinessPartner": oBusinessPartner }], "BusinessPartners");
-                oComboBox.setModel(oPartnerModel);
-                oComboBox.bindAggregation("items", {
-                    path: "/",
-                    template: new sap.ui.core.Item({
-                        key: "{BusinessPartner}",
-                        text: "{BusinessPartner}"
-                    })
-                });
-            }
+            // else if (objType === "ISUPARTNER") {
+            //     let oComboBox = new sap.m.ComboBox();
+            //     oComboBox = this.byId("cmbobjKey");
+            //     let oPartnerModel = new sap.ui.model.json.JSONModel();
+            //     oPartnerModel.setData([{ "BusinessPartner": oBusinessPartner }], "BusinessPartners");
+            //     oComboBox.setModel(oPartnerModel);
+            //     oComboBox.bindAggregation("items", {
+            //         path: "/",
+            //         template: new sap.ui.core.Item({
+            //             key: "{BusinessPartner}",
+            //             text: "{BusinessPartner}"
+            //         })
+            //     });
+            // }
 
         },
-        onObjectTypeChange: function (oEvent) {
-            const objType = oEvent.getSource().getSelectedItem().getText();
+        // onObjectTypeChange: function (oEvent) {
+        //     const objType = oEvent.getSource().getSelectedItem().getText();
+        //     const oBusinessPartner = this.byId("idBp").getValue();
+        //     if (!oBusinessPartner) {
+        //         return MessageBox.error("Please enter business partner...")
+        //     }
+        //     if (objType === "ISUACCOUNT") {
+        //         let oComboBox = new sap.m.ComboBox();
+        //         oComboBox = this.byId("cmbobjKey");
+        //         let oContractModel = this.getView().getModel();
+        //         oContractModel.read("/Accounts(AccountID='" + oBusinessPartner + "')/ContractAccounts", {
+        //             success: function (response) {
+        //                 if (response.results.length > 0) {
+        //                     var odropdownModel = new sap.ui.model.json.JSONModel();
+        //                     odropdownModel.setData(response.results, "ContractAccounts");
+        //                     odropdownModel.setSizeLimit(300);
+        //                     oComboBox.setModel(odropdownModel);
+        //                     oComboBox.bindAggregation("items", {
+        //                         path: "/",
+        //                         template: new sap.ui.core.Item({
+        //                             key: "{ContractAccountID}",
+        //                             text: "{ContractAccountID}"
+        //                         })
+        //                     });
+        //                 }
+        //                 else if (response.results.length === 0) {
+        //                     let oPartnerModel = new sap.ui.model.json.JSONModel();
+        //                     oPartnerModel.setData([{ "BusinessPartner": '' }], "BusinessPartners");
+        //                     oComboBox.setModel(oPartnerModel);
+        //                     oComboBox.bindAggregation("items", {
+        //                         path: "/",
+        //                         template: new sap.ui.core.Item({
+        //                             key: "{BusinessPartner}",
+        //                             text: "{BusinessPartner}"
+        //                         })
+        //                     });
+        //                     return MessageBox.error("There are no contract accounts with this business partner");
+        //                 }
+        //             },
+        //             error: (oError) => {
+        //                 console.error("Error:", oError);
+        //             }
+        //         });
+
+        //     }
+        //     else if (objType === "ISUPARTNER") {
+        //         let oComboBox = new sap.m.ComboBox();
+        //         oComboBox = this.byId("cmbobjKey");
+        //         let oPartnerModel = new sap.ui.model.json.JSONModel();
+        //         oPartnerModel.setData([{ "BusinessPartner": oBusinessPartner }], "BusinessPartners");
+        //         oPartnerModel.setSizeLimit(300);
+        //         oComboBox.setModel(oPartnerModel);
+        //         oComboBox.bindAggregation("items", {
+        //             path: "/",
+        //             template: new sap.ui.core.Item({
+        //                 key: "{BusinessPartner}",
+        //                 text: "{BusinessPartner}"
+        //             })
+        //         });
+        //     }
+        // },
+        onValueHelpRequest: function (oEvent) {
+            debugger;
             const oBusinessPartner = this.byId("idBp").getValue();
             if (!oBusinessPartner) {
-                return MessageBox.error("Please enter business partner...")
+                return MessageBox.error("Business Partner is Mandatory...");
             }
-            if (objType === "ISUACCOUNT") {
-                let oComboBox = new sap.m.ComboBox();
-                oComboBox = this.byId("cmbobjKey");
-                let oContractModel = this.getView().getModel();
-                oContractModel.read("/Accounts(AccountID='" + oBusinessPartner + "')/ContractAccounts", {
+            oContractModel.read("/Accounts('" + oBusinessPartner + "')/ContractAccounts",
+                {
+                    urlParameters: {
+                        "$select": "ContractAccountID" // Comma-separated list of properties
+                    },
                     success: function (response) {
                         if (response.results.length > 0) {
                             var odropdownModel = new sap.ui.model.json.JSONModel();
                             odropdownModel.setData(response.results, "ContractAccounts");
-                            oComboBox.setModel(odropdownModel);
-                            oComboBox.bindAggregation("items", {
-                                path: "/",
-                                template: new sap.ui.core.Item({
-                                    key: "{ContractAccountID}",
-                                    text: "{ContractAccountID}"
-                                })
+                            oController.getView().getModel("ContractModel").setProperty("/ContractsList", response.results);
+                            var oView = oController.getView();
+                            oController._sInputId = oEvent.getSource().getId();
+                            var sInputValue = oEvent.getSource().getValue();
+                            //var _sInputId = oEvent.getSource().getId();
+
+                            // create value help dialog
+                            if (!oController._pValueHelpDialog) {
+                                oController._pValueHelpDialog = Fragment.load({
+                                    id: oView.getId(),//"idInpuContract",
+                                    name: "com.sap.lh.mr.zcommunicationpreference.fragment.selectDialog",
+                                    controller: oController
+                                }).then(function (oValueHelpDialog) {
+                                    oController.getView().addDependent(oValueHelpDialog);
+                                    return oValueHelpDialog;
+                                }.bind(oController));
+                            }
+
+                            // open value help dialog
+                            oController._pValueHelpDialog.then(function (oValueHelpDialog) {
+                                oValueHelpDialog.open();
                             });
+                            // this._pValueHelpDialog.then(function (oDialog) {
+                            //     // Create a filter for the binding
+                            //     oDialog.getBinding("items").filter([new Filter("Name", FilterOperator.Contains, sInputValue)]);
+                            //     // Open ValueHelpDialog filtered by the input's value
+                            //     oDialog.open(sInputValue);
+                            // });
                         }
                         else if (response.results.length === 0) {
                             let oPartnerModel = new sap.ui.model.json.JSONModel();
@@ -666,21 +757,23 @@ sap.ui.define([
                     }
                 });
 
+        },
+        _handleValueHelpClose: function (oEvent) {
+            debugger;
+            var oSelectedItem = oEvent.getParameter("selectedItem");
+            if (oSelectedItem) {
+                var productInput = oController.byId(oController._sInputId);
+                productInput.setValue(oSelectedItem.getTitle());
             }
-            else if (objType === "ISUPARTNER") {
-                let oComboBox = new sap.m.ComboBox();
-                oComboBox = this.byId("cmbobjKey");
-                let oPartnerModel = new sap.ui.model.json.JSONModel();
-                oPartnerModel.setData([{ "BusinessPartner": oBusinessPartner }], "BusinessPartners");
-                oComboBox.setModel(oPartnerModel);
-                oComboBox.bindAggregation("items", {
-                    path: "/",
-                    template: new sap.ui.core.Item({
-                        key: "{BusinessPartner}",
-                        text: "{BusinessPartner}"
-                    })
-                });
-            }
+            oEvent.getSource().getBinding("items").filter([]);
+        },
+        _handleValueHelpSearch: function (oEvent) {
+            var sValue = oEvent.getParameter("value");
+            var oFilter = new Filter(
+                "ContractAccountID",
+                FilterOperator.Contains, sValue
+            );
+            oEvent.getSource().getBinding("items").filter([oFilter]);
         }
     });
 });

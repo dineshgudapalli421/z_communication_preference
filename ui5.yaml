@@ -19,6 +19,9 @@ server:
           - path: /sap
             url: http://sapsdvapp.aws.londonhydro.cloud:8000
             client: '200'
+          - url: http://sapsdvapp.aws.londonhydro.cloud:8000/
+            client: '200'
+            path: /sap/opu/odata/SAP/ERP_ISU_UMC/
     - name: fiori-tools-appreload
       afterMiddleware: compression
       configuration:

@@ -12,16 +12,23 @@
 				</Input>
 
 				<Label text="Object Type"/>
-				<Select id="idObjectType" change=".onObjectTypeChange">
+				<Select id="idObjectType" editable="false">
 					<core:Item key="ISUACCOUNT" text="ISUACCOUNT" />
-					<core:Item key="ISUPARTNER" text="ISUPARTNER" />
+					<!-- <core:Item key="ISUPARTNER" text="ISUPARTNER" /> -->
 				</Select>
 
-				<Label text="Object key"/>				
-				<ComboBox id="cmbobjKey"
+				<Label text="Object key"/>
+				<Input
+					id="inputobjKey" showSuggestion="true" type="Text"
+					showValueHelp="true" valueHelpRequest=".onValueHelpRequest" suggestionItems="{ContractModel>/ContractsList}">
+					<suggestionItems>
+						<core:Item text="{ContractModel>ContractAccountID}" />
+					</suggestionItems>
+				</Input>				
+				<!-- <ComboBox id="cmbobjKey"
 					showClearIcon="true"					
 				>				
-				</ComboBox>
+				</ComboBox> -->
 
 				<Label text="Corresp. Type"/>
 				<ComboBox id="cmbCorrespType"

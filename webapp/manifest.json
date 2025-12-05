@@ -24,6 +24,15 @@
           "localUri": "localService/mainService/metadata.xml",
           "odataVersion": "2.0"
         }
+      },
+      "ERP_ISU_UMC": {
+        "uri": "/sap/opu/odata/SAP/ERP_ISU_UMC/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/ERP_ISU_UMC/metadata.xml",
+          "odataVersion": "2.0"
+        }
       }
     },
     "crossNavigation": {
@@ -89,6 +98,11 @@
       },
       "": {
         "dataSource": "mainService",
+        "preload": true,
+        "settings": {}
+      },
+      "ERP_ISU_UMC": {
+        "dataSource": "ERP_ISU_UMC",
         "preload": true,
         "settings": {}
       }
