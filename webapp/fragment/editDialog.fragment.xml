@@ -45,6 +45,20 @@
 					showSuggestion="true"  editable="false" value="{/DeliveryChannel}">
 				</Input>
 
+				<Label text="Threshold"/>
+				<Input
+					id="iduThreshold" editable="false" type="Number" value="{/Threshold}">
+				</Input>
+                <Label text="UOM"/>
+				<!-- <Input
+					id="cmbuUOM"
+					showSuggestion="true"  editable="false" value="{/UOM}">
+				</Input> -->
+				<ComboBox id="cmbuUOM"
+					showClearIcon="true" editable="false" selectedKey="{/Uom}"					
+				>				
+				</ComboBox>
+
 				<CheckBox id="chkUStatus" text="Status" selected="{= ${/Status} === true}" />
 		  </form:SimpleForm>
 		</content>

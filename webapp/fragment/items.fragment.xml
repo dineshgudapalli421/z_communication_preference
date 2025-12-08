@@ -19,7 +19,7 @@
                 enableAutoBinding="true"
                 enableExport="false"
                 demandPopin="true"
-                requestAtLeastFields="AccountID,EntitySet,EntityKey,CorrespondenceTypeID,CorrespondenceDesc,DeliveryChannel,Status,ValidFrom,ValidTo,CreatedBy,CreatedOn,UpdatedBy,UpdatedOn"
+                requestAtLeastFields="AccountID,EntitySet,EntityKey,CorrespondenceTypeID,CorrespondenceDesc,DeliveryChannel,Status,Threshold,UOM,ValidFrom,ValidTo,CreatedBy,CreatedOn,UpdatedBy,UpdatedOn"
             >
 <Table id="tblCommunicationPreference"
                 ariaLabelledBy="title"
@@ -109,6 +109,20 @@
                         <m:Label text="Status" textAlign="Center" width="100%"/>
                         <template>
                             <m:CheckBox id="colStatus" textAlign="Center" editable="false" selected="{= ${CustModel>Status} === true}" />
+                        </template>
+                    </Column> 
+                    <Column
+                        width="11rem" hAlign="Center">
+                        <m:Label text="Threshold" textAlign="Center" width="100%"/>
+                        <template>
+                            <m:Text textAlign="Center" text="{CustModel>Threshold}"/>
+                        </template>
+                    </Column> 
+                    <Column
+                        width="11rem" hAlign="Center">
+                        <m:Label text="UOM" textAlign="Center" width="100%"/>
+                        <template>
+                            <m:Text textAlign="Center" text="{CustModel>UOM}"/>
                         </template>
                     </Column> 
                     <Column

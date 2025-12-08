@@ -32,7 +32,7 @@
 
 				<Label text="Corresp. Type"/>
 				<ComboBox id="cmbCorrespType"
-					showClearIcon="true">					
+					showClearIcon="true" change=".onChangeCorrespType">					
 				</ComboBox>					
 				
 				<Label text="Corresp. Role"/>				
@@ -49,7 +49,15 @@
 					<core:Item key="PUSH" text="PUSH" />
 					<core:Item key="LETT" text="LETTER" />
 				</Select>
-
+				<Label text="Threshold"/>
+				<Input
+					id="idThreshold" editable="false" type="Number">
+				</Input>
+                <Label text="UOM"/>
+				<ComboBox id="cmbUOM"
+					showClearIcon="true" editable="false"					
+				>				
+				</ComboBox>
 				<CheckBox id="chkStatus" text="Status" selected="true" />
 		  </form:SimpleForm>
 		</content>

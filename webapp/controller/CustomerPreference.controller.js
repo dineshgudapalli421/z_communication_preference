@@ -169,10 +169,22 @@ sap.ui.define([
                 success: function (response) {
                     oBusyDialog.close();
                     if (response.results.length > 0) {
+                        debugger;
                         var finalObject = [];
                         var aResults = response.results;
                         aResults.forEach(function (oCurrentObject) {
                             const oCorrTypeId = oCurrentObject.CorrespondenceTypeID;
+                            let oSettings = {};
+                            oSettings = oCurrentObject.Settings ? JSON.parse(oCurrentObject.Settings) : '';
+                            let Threshold, UOM;
+                            if (oSettings !== '') {
+                                Threshold = oSettings.THRESHOLD;
+                                UOM = oSettings.UOM;
+                            }
+                            else {
+                                Threshold = '';
+                                UOM = '';
+                            }
                             let oCorrType = '';
                             if (oCorrTypeId === "*") {
                                 oCorrType = 'ALL';
@@ -198,6 +210,8 @@ sap.ui.define([
                                 "DeliveryChannelID": oCurrentObject.DeliveryChannelID,
                                 "DeliveryChannel": oDeliveryChannel,
                                 "Status": oCurrentObject.Status,
+                                "Threshold": Threshold,
+                                "UOM": UOM,
                                 "ValidFrom": oCurrentObject.ValidFrom,//oController._fngetDateFormat(oCurrentObject.ValidFrom),
                                 "ValidTo": oCurrentObject.ValidTo,//oController._fngetDateFormat(oCurrentObject.ValidTo),
                                 "CreatedBy": oCurrentObject.CreatedBy,
@@ -310,16 +324,26 @@ sap.ui.define([
             const correspRole = this.byId("idCorrespRole").getSelectedKey() ? this.byId("idCorrespRole").getSelectedKey() : '';
             const deliveryChannel = this.byId("idDeliveryChannel").getSelectedKey() ? this.byId("idDeliveryChannel").getSelectedKey() : '';
             // const deliveryAddress = this.byId("idDeliveryAddress").getValue();
+            const oThreshold = this.byId("idThreshold").getValue();
+            const oUom = this.byId("cmbUOM").getSelectedKey() ? this.byId("cmbUOM").getSelectedKey() : '';
             const status = this.byId("chkStatus").getSelected();
             if (!oBpartner) return MessageBox.error("Business Partner is mandatory...");
             if (!objectKey) return MessageBox.error("Object Key is mandatory...");
             if (!correspType && correspRole !== "ZPLS") return MessageBox.error("Correspondence Type is mandatory...");
             if (correspRole === "ZPLS" && objectType === "ISUPARTNER") return MessageBox.error("Object Type should be Account...");
+            if (correspType === "ZM08" || correspType === "ZM15" || correspType === "ZM16" || correspType === "ZM17") {
+                if (!oThreshold) return MessageBox.error("Threshold is mandatory...");
+                if (!oUom) return MessageBox.error("UOM is mandatory...");
+            }
             if (objectType === "ISUACCOUNT") {
                 objectType = "ContractAccount";
             }
             else {
                 objectType = "Account";
+            }
+            let aSettings = '';
+            if (correspType === "ZM08" || correspType === "ZM15" || correspType === "ZM16" || correspType === "ZM17") {
+                aSettings = "{\"THRESHOLD\" : \"" + oThreshold + "\", \"UOM\" : \"" + oUom + "\"}";
             }
 
             let objRequest = {
@@ -333,7 +357,7 @@ sap.ui.define([
                 "DeliveryAddressLine": "001",
                 // "DeliveryAddress": deliveryAddress,
                 "Status": status,
-                "Settings": ""
+                "Settings": aSettings
             };
             var oModel = this.getView().getModel();
             var sPath = "/ZCommunicationPreferences(AccountID='" + oBpartner + "')";
@@ -341,7 +365,7 @@ sap.ui.define([
                 method: "PATCH",
                 success: function (response) {
                     oController.onCancelCreateDialog();
-                    oController.getView().byId("application-Z_COM_PREFRENCE-change-component---CustomerPreference--filterbar-btnGo").firePress();
+                    oController.getView().byId("application-comsaplhmrzcommunicationprefer-display-component---CustomerPreference--filterbar-btnGo").firePress();
                     return MessageBox.success("Communication Preference Created Successfully.", response);
                 },
                 error: function (oError) {
@@ -368,8 +392,14 @@ sap.ui.define([
             const correspType = this.byId("iduCorrespType").getValue();
             let correspRole = this.byId("iduCorrespRole").getValue();
             let deliveryChannel = this.byId("iduDeliveryChannel").getValue();
+            const oThreshold = this.byId("iduThreshold").getValue();
+            const oUom = this.byId("cmbuUOM").getSelectedKey() ? this.byId("cmbuUOM").getSelectedKey() : '';
             const status = this.byId("chkUStatus").getSelected();
             const oCorrType = correspType === 'ALL' ? '*' : oController._fngetCorreType('Description', correspType);
+            if (oCorrType === "ZM08" || oCorrType === "ZM15" || oCorrType === "ZM16" || oCorrType === "ZM17") {
+                if (!oThreshold) return MessageBox.error("Threshold is mandatory...");
+                if (!oUom) return MessageBox.error("UOM is mandatory...");
+            }
             if (deliveryChannel === "EMAIL") {
                 deliveryChannel = "EMAL";
             }
@@ -378,6 +408,10 @@ sap.ui.define([
             }
             if (objectType === "Business Partner") objectType = "Account";
             correspRole = correspRole === 'Business Contracts' ? 'COMM' : 'ZPLS';
+            let aSettings = '';
+            if (oCorrType === "ZM08" || oCorrType === "ZM15" || oCorrType === "ZM16" || oCorrType === "ZM17") {
+                aSettings = "{\"THRESHOLD\" : \"" + oThreshold + "\", \"UOM\" : \"" + oUom + "\"}";
+            }
             let objRequest = {
                 "AccountID": oBpartner,
                 "EntitySet": objectType,
@@ -388,7 +422,7 @@ sap.ui.define([
                 "DeliveryChannelID": deliveryChannel,
                 "DeliveryAddressLine": "001",
                 "Status": status,
-                "Settings": ""
+                "Settings": aSettings
             };
             var oModel = this.getView().getModel();
             var sPath = "/ZCommunicationPreferences(AccountID='" + oBpartner + "')";
@@ -397,7 +431,7 @@ sap.ui.define([
                 success: function (data) {
                     debugger;
                     oController.onCancelEditDialog();
-                    oController.getView().byId("application-Z_COM_PREFRENCE-change-component---CustomerPreference--filterbar-btnGo").firePress();
+                    oController.getView().byId("application-comsaplhmrzcommunicationprefer-display-component---CustomerPreference--filterbar-btnGo").firePress();
                     return MessageBox.success("Communication Preference updated successfully", data);
                 },
                 error: function (oError) {
@@ -465,6 +499,7 @@ sap.ui.define([
         },
 
         handleActionPress: async function (oEvent) {
+            debugger;
             var oTable = this.getView().byId("tblCommunicationPreference");
             var rowID = oTable.getSelectedIndices();
             if (rowID.length === 0) {
@@ -475,6 +510,9 @@ sap.ui.define([
                 var objRow = oTable.getContextByIndex(rowID).getModel().getData()[rowID];
                 const oCorrTypeId = objRow.CorrespondenceTypeID;
                 const oCorrType = oCorrTypeId === '*' ? 'ALL' : oController._fngetCorreType('ID', oCorrTypeId);
+                const oThreshold = objRow.Threshold;
+                const oUom = objRow.UOM;
+
 
                 let oCorreSpRole = objRow.CommunicationCategoryID === 'COMM' ? 'Business Contracts' : 'Paperless Billing';
 
@@ -486,6 +524,8 @@ sap.ui.define([
                     "CorreSpRole": oCorreSpRole,
                     "DeliveryChannel": objRow.DeliveryChannelID,
                     "DeliveryAddress": objRow.DeliveryAddress,
+                    "Threshold": oThreshold,
+                    "UOM": oUom,
                     "Status": objRow.Status
                 };
                 let oModel = new JSONModel();
@@ -495,6 +535,19 @@ sap.ui.define([
                     name: "com.sap.lh.mr.zcommunicationpreference.fragment.editDialog"
                 });
                 this.oEditDialog.open();
+                let oInput = new sap.m.Input();
+                oInput = this.byId("iduThreshold");
+                if (oCorrTypeId === 'ZM08') {
+                    oInput.setEditable(true);
+                    oController.getComboUOM('KWH', "cmbuUOM");
+                } else if (oCorrTypeId === 'ZM15' || oCorrTypeId === 'ZM16' || oCorrTypeId === 'ZM17') {
+                    oInput.setEditable(true);
+                    oController.getComboUOM('M3', "cmbuUOM");
+                }
+                else {
+                    oInput.setEditable(false);
+                    oController.getComboUOM('', "cmbuUOM");
+                }
                 // let objComboBox = new sap.m.ComboBox();
                 // objComboBox = this.byId("iduCorrespType");
                 // objComboBox.setModel(oCorrespTypeModel.getData("CorrespondType"));
@@ -568,6 +621,45 @@ sap.ui.define([
             oTable.setRowActionCount(iCount);
         },
 
+        onChangeCorrespType: function (oEvent) {
+            debugger;
+            const oCorreType = oEvent.getSource().getSelectedKey();
+            let paramCorreType = '';
+            let oInput = new sap.m.Input();
+            oInput = this.byId("idThreshold");
+            if (oCorreType === 'ZM08') {
+                oInput.setEditable(true);
+                oController.getComboUOM('KWH', "cmbUOM");
+            } else if (oCorreType === 'ZM15' || oCorreType === 'ZM16' || oCorreType === 'ZM17') {
+                oInput.setEditable(true);
+                oController.getComboUOM('M3', "cmbUOM");
+            }
+            else {
+                oInput.setEditable(false);
+                oController.getComboUOM('', "cmbUOM");
+            }
+        },
+        getComboUOM: function (oParam, cmbId) {
+            let oComboBox = new sap.m.ComboBox();
+            oComboBox = this.byId(cmbId);
+            oComboBox.setEditable(true);
+            let oPartnerModel = new sap.ui.model.json.JSONModel();
+            oPartnerModel.setData([{ "Uom": oParam }], "UOM");
+            oComboBox.setModel(oPartnerModel);
+            oComboBox.bindAggregation("items", {
+                path: "/",
+                template: new sap.ui.core.Item({
+                    key: "{Uom}",
+                    text: "{Uom}"
+                })
+            });
+            if (oParam === '') {
+                oComboBox.setEditable(false);
+            }
+            if (cmbId === 'cmbuUOM') {
+                oComboBox.setSelectedKey(oParam);
+            }
+        },
         onBPChange: function (oEvent) {
             const oBusinessPartner = oEvent.getSource().getValue();
             if (!oBusinessPartner) {
