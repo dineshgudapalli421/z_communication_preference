@@ -9,8 +9,11 @@ sap.ui.define([
     "sap/ui/table/RowAction",
     "sap/ui/table/RowActionItem",
     "sap/ui/table/RowSettings",
-    "sap/ui/core/format/DateFormat"
-], (Controller, ODataModel, Filter, FilterOperator, JSONModel, MessageBox, Fragment, RowAction, RowActionItem, RowSettings, DateFormat) => {
+    "sap/ui/core/format/DateFormat",
+    "sap/ui/model/type/Float",
+    "sap/ui/model/odata/type/Decimal",
+    "sap/ui/core/format/NumberFormat"
+], (Controller, ODataModel, Filter, FilterOperator, JSONModel, MessageBox, Fragment, RowAction, RowActionItem, RowSettings, DateFormat,FloatType, DecimalType, NumberFormat) => {
     "use strict";
     var oRouter, oController, oCommPrefModel, UIComponent, oCorrespTypeModel, oContractModel;
     return Controller.extend("com.sap.lh.mr.zcommunicationpreference.controller.CustomerPreference", {
@@ -45,7 +48,6 @@ sap.ui.define([
             oController._fngetUserAuthorization(userId);
         },
         _fngetCorrespondenceModel: function () {
-            debugger;
             oCommPrefModel.read("/CorrespondenceTypes?$select=CorrespondenceTypeID,Description", {
                 success: function (response) {
                     if (response.results.length > 0) {
@@ -70,8 +72,7 @@ sap.ui.define([
                 }
             });
         },
-        _fngetUserAuthorization: function (userId) {
-            debugger;
+        _fngetUserAuthorization: function (userId) {            
             var oModel = oController.getView().getModel("SelectionModel");
             oCommPrefModel.callFunction("/GetAccessType", {
                 method: "GET",
@@ -79,7 +80,6 @@ sap.ui.define([
                     UserID: userId //"TST_PR_DISP"
                 },
                 success: function (oData, response) {
-                    debugger;
                     const accessType = oData.GetAccessType.AccessType;
                     var oCreate = oController.getView().byId("btnCreate");
                     var oEdit = oController.getView().byId("btnEdit");
@@ -105,24 +105,8 @@ sap.ui.define([
                     console.error("Error:", error);
                 }
             });
-            // oCommPrefModel.read("/GetAccessType?UserID='TST_PR_CHNGE'", {
-            //     success: function (response) {
-            //         debugger;
-            //         if (response.results.length > 0) {
-            //             debugger;
-
-            //         }
-            //         else if (response.results.length === 0) {
-            //             return MessageBox.error("There are no Corresponed Types exists...");
-            //         }
-            //     },
-            //     error: (oError) => {
-            //         console.error("Error:", oError);
-            //     }
-            // });
         },
         _onRouteMatched: function (oEvent) {
-            debugger;
             var oComponentData = UIComponent.getComponentData();
             if (oComponentData && oComponentData.startupParameters) {
                 var oParams = oComponentData.startupParameters;
@@ -169,7 +153,6 @@ sap.ui.define([
                 success: function (response) {
                     oBusyDialog.close();
                     if (response.results.length > 0) {
-                        debugger;
                         var finalObject = [];
                         var aResults = response.results;
                         aResults.forEach(function (oCurrentObject) {
@@ -256,7 +239,6 @@ sap.ui.define([
             return formatDate.toString();
         },
         onCreateRecord: async function () {
-            debugger;
             var that = this;
             this.oCreateDialog ??= await this.loadFragment({
                 name: "com.sap.lh.mr.zcommunicationpreference.fragment.createDialog"
@@ -268,7 +250,6 @@ sap.ui.define([
             oCorrespTypeModel.read("/CorrespondenceTypes?$select=CorrespondenceTypeID,Description", {
                 success: function (response) {
                     if (response.results.length > 0) {
-                        debugger;
                         let track = {}
                         let results = response.results.reduce((op, inp) => {
                             //if (!track[inp.CorrespondenceTypeID] && inp.RegFlag === '')
@@ -316,7 +297,6 @@ sap.ui.define([
             this.oViewDialog = undefined;
         },
         onSubmitDialog: function (oEvent) {
-            debugger;
             const oBpartner = this.byId("idBp").getValue();
             let objectType = this.byId("idObjectType").getSelectedKey() ? this.byId("idObjectType").getSelectedItem().getText() : '';
             const objectKey = this.byId("inputobjKey").getValue(); //this.byId("cmbobjKey").getSelectedKey() ? this.byId("cmbobjKey").getSelectedItem().getText() : '';
@@ -365,7 +345,8 @@ sap.ui.define([
                 method: "PATCH",
                 success: function (response) {
                     oController.onCancelCreateDialog();
-                    oController.getView().byId("application-comsaplhmrzcommunicationprefer-display-component---CustomerPreference--filterbar-btnGo").firePress();
+                    //application-comsaplhmrzcommunicationprefer-display-component---CustomerPreference--filterbar-btnGo
+                    oController.getView().byId("application-Z_COM_PREFRENCE-change-component---CustomerPreference--filterbar-btnGo").firePress();
                     return MessageBox.success("Communication Preference Created Successfully.", response);
                 },
                 error: function (oError) {
@@ -385,7 +366,6 @@ sap.ui.define([
         },
 
         onUpdateDialog: function (oEvent) {
-            debugger;
             const oBpartner = this.byId("iduBp").getValue();
             let objectType = this.byId("iduObjectType").getValue();
             const objectKey = this.byId("iduObjectKey").getValue();
@@ -429,9 +409,8 @@ sap.ui.define([
             oModel.update(sPath, objRequest, {
                 method: "PATCH",
                 success: function (data) {
-                    debugger;
                     oController.onCancelEditDialog();
-                    oController.getView().byId("application-comsaplhmrzcommunicationprefer-display-component---CustomerPreference--filterbar-btnGo").firePress();
+                    oController.getView().byId("application-Z_COM_PREFRENCE-change-component---CustomerPreference--filterbar-btnGo").firePress();
                     return MessageBox.success("Communication Preference updated successfully", data);
                 },
                 error: function (oError) {
@@ -499,14 +478,12 @@ sap.ui.define([
         },
 
         handleActionPress: async function (oEvent) {
-            debugger;
             var oTable = this.getView().byId("tblCommunicationPreference");
             var rowID = oTable.getSelectedIndices();
             if (rowID.length === 0) {
                 return MessageBox.error("Please select a row.");
             }
             else if (rowID.length > 0) {
-                debugger;
                 var objRow = oTable.getContextByIndex(rowID).getModel().getData()[rowID];
                 const oCorrTypeId = objRow.CorrespondenceTypeID;
                 const oCorrType = oCorrTypeId === '*' ? 'ALL' : oController._fngetCorreType('ID', oCorrTypeId);
@@ -619,19 +596,41 @@ sap.ui.define([
 
             oTable.setRowActionTemplate(oTemplate);
             oTable.setRowActionCount(iCount);
-        },
-
-        onChangeCorrespType: function (oEvent) {
+        },        
+        onLiveChangeInput: function (oEvent) {
             debugger;
+            var oInput = oEvent.getSource();
+            var sValue = oEvent.getParameter("value");
+
+            var newValue =  parseFloat(sValue).toFixed(3);
+            if (sValue !== newValue) {
+                oInput.setValue(newValue);
+            }
+        },
+        onChangeCorrespType: function (oEvent) {
             const oCorreType = oEvent.getSource().getSelectedKey();
             let paramCorreType = '';
             let oInput = new sap.m.Input();
             oInput = this.byId("idThreshold");
+            // var oBindingInfo = {
+            //     path: "",
+            //     type: new sap.ui.model.type.Float({
+            //         maxFractionDigits: 3,
+            //         minFractionDigits: 3,
+            //         groupingEnabled: false
+            //     }, {
+            //         maximum: 1000.000,
+            //         minimum: 0.000
+            //     })
+            // };
+
             if (oCorreType === 'ZM08') {
                 oInput.setEditable(true);
+                // oInput.bindValue(oBindingInfo);
                 oController.getComboUOM('KWH', "cmbUOM");
             } else if (oCorreType === 'ZM15' || oCorreType === 'ZM16' || oCorreType === 'ZM17') {
                 oInput.setEditable(true);
+                // oInput.bindValue(oBindingInfo);
                 oController.getComboUOM('M3', "cmbUOM");
             }
             else {
@@ -787,7 +786,6 @@ sap.ui.define([
         //     }
         // },
         onValueHelpRequest: function (oEvent) {
-            debugger;
             const oBusinessPartner = this.byId("idBp").getValue();
             if (!oBusinessPartner) {
                 return MessageBox.error("Business Partner is Mandatory...");
@@ -851,7 +849,6 @@ sap.ui.define([
 
         },
         _handleValueHelpClose: function (oEvent) {
-            debugger;
             var oSelectedItem = oEvent.getParameter("selectedItem");
             if (oSelectedItem) {
                 var productInput = oController.byId(oController._sInputId);

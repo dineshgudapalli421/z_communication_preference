@@ -47,7 +47,7 @@
 
 				<Label text="Threshold"/>
 				<Input
-					id="iduThreshold" editable="false" type="Number" value="{/Threshold}">
+					id="iduThreshold" editable="false" type="Number" change="onLiveChangeInput" value="{/Threshold}">
 				</Input>
                 <Label text="UOM"/>
 				<!-- <Input

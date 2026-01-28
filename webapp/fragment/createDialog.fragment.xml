@@ -51,7 +51,9 @@
 				</Select>
 				<Label text="Threshold"/>
 				<Input
-					id="idThreshold" editable="false" type="Number">
+					id="idThreshold" editable="false" 
+					change="onLiveChangeInput"
+					type="Number">
 				</Input>
                 <Label text="UOM"/>
 				<ComboBox id="cmbUOM"
