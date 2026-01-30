@@ -130,7 +130,7 @@ sap.ui.define([
             const businessPartner = this.getView().byId("idBP").getValue();
             const contractAccount = this.getView().byId("idCA").getValue();
             const chkStatus = this.getView().byId("idStatus").getSelectedKey();
-            if (businessPartner === "") {
+            if (businessPartner === "" && contractAccount === "") {
                 oJsonModel.setData({});
                 oController.getView().byId("tblCommunicationPreference").setModel(oJsonModel, "CustModel");
                 return MessageBox.error("Business Partner is mandatory...");
