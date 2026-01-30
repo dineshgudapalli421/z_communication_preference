@@ -13,7 +13,7 @@ sap.ui.define([
     "sap/ui/model/type/Float",
     "sap/ui/model/odata/type/Decimal",
     "sap/ui/core/format/NumberFormat"
-], (Controller, ODataModel, Filter, FilterOperator, JSONModel, MessageBox, Fragment, RowAction, RowActionItem, RowSettings, DateFormat,FloatType, DecimalType, NumberFormat) => {
+], (Controller, ODataModel, Filter, FilterOperator, JSONModel, MessageBox, Fragment, RowAction, RowActionItem, RowSettings, DateFormat, FloatType, DecimalType, NumberFormat) => {
     "use strict";
     var oRouter, oController, oCommPrefModel, UIComponent, oCorrespTypeModel, oContractModel;
     return Controller.extend("com.sap.lh.mr.zcommunicationpreference.controller.CustomerPreference", {
@@ -72,7 +72,7 @@ sap.ui.define([
                 }
             });
         },
-        _fngetUserAuthorization: function (userId) {            
+        _fngetUserAuthorization: function (userId) {
             var oModel = oController.getView().getModel("SelectionModel");
             oCommPrefModel.callFunction("/GetAccessType", {
                 method: "GET",
@@ -596,15 +596,39 @@ sap.ui.define([
 
             oTable.setRowActionTemplate(oTemplate);
             oTable.setRowActionCount(iCount);
-        },        
+        },
         onLiveChangeInput: function (oEvent) {
             debugger;
             var oInput = oEvent.getSource();
             var sValue = oEvent.getParameter("value");
 
-            var newValue =  parseFloat(sValue).toFixed(3);
+            var newValue = parseFloat(sValue).toFixed(3);
             if (sValue !== newValue) {
                 oInput.setValue(newValue);
+            }
+        },
+        onChangeCorrSpRole: function (oEvent) {
+            const oSelectedItem = oEvent.getParameter("selectedItem");
+            if (oSelectedItem) {
+                const sSelectedKey = oSelectedItem.getKey();
+                let oDeliveryChannel = new sap.m.Select();
+                oDeliveryChannel = this.byId("idDeliveryChannel");
+                if (sSelectedKey === 'ZPLS') {
+                    var oComboBox = this.byId("cmbCorrespType");
+                    let oInput = new sap.m.Input();
+
+                    oComboBox.setSelectedKey("");
+                    oInput = this.byId("idThreshold");
+                    if (oInput) {
+                        oInput.setValue("");
+                    }
+                    oInput.setEditable(false);
+                    oController.getComboUOM('', "cmbUOM");
+                    oDeliveryChannel.setSelectedKey("EMAL");
+                    oDeliveryChannel.setEditable(false);
+                } else if (sSelectedKey === 'COMM') {
+                    oDeliveryChannel.setEditable(true);
+                }
             }
         },
         onChangeCorrespType: function (oEvent) {
@@ -612,17 +636,14 @@ sap.ui.define([
             let paramCorreType = '';
             let oInput = new sap.m.Input();
             oInput = this.byId("idThreshold");
-            // var oBindingInfo = {
-            //     path: "",
-            //     type: new sap.ui.model.type.Float({
-            //         maxFractionDigits: 3,
-            //         minFractionDigits: 3,
-            //         groupingEnabled: false
-            //     }, {
-            //         maximum: 1000.000,
-            //         minimum: 0.000
-            //     })
-            // };
+            let oCorreSpRole = new sap.m.Select();
+            oCorreSpRole = this.byId("idCorrespRole");
+            let oDeliveryChannel = new sap.m.Select();
+            oDeliveryChannel = this.byId("idDeliveryChannel");
+            oDeliveryChannel.setEditable(true);
+            if (oCorreType !== '') {
+                oCorreSpRole.setSelectedKey("COMM");
+            }
 
             if (oCorreType === 'ZM08') {
                 oInput.setEditable(true);
@@ -634,6 +655,7 @@ sap.ui.define([
                 oController.getComboUOM('M3', "cmbUOM");
             }
             else {
+                if (oInput) oInput.setValue("");
                 oInput.setEditable(false);
                 oController.getComboUOM('', "cmbUOM");
             }
