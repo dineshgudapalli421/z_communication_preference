@@ -41,7 +41,8 @@ sap.ui.define([
             var oSelectionModel = new sap.ui.model.json.JSONModel({
                 bCreateBtn: false,
                 bEditBtn: false,
-                bViewBtn: false
+                bViewBtn: false,
+                DeliveryChannel: []
             });
             oController.getView().setModel(oSelectionModel, "SelectionModel");
             oController._fngetCorrespondenceModel();
@@ -63,9 +64,9 @@ sap.ui.define([
                         oCorrespTypeModel = new sap.ui.model.json.JSONModel();
                         oCorrespTypeModel.setData([results], "CorrespondType");
                     }
-                    else if (response.results.length === 0) {
-                        return MessageBox.error("There are no Corresponed Types exists...");
-                    }
+                    // else if (response.results.length === 0) {
+                    //     return MessageBox.error("There are no Corresponed Types exists...");
+                    // }
                 },
                 error: (oError) => {
                     console.error("Error:", oError);
@@ -272,9 +273,9 @@ sap.ui.define([
                             })
                         });
                     }
-                    else if (response.results.length === 0) {
-                        return MessageBox.success("There are no Corresponed Types exists...");
-                    }
+                    // else if (response.results.length === 0) {
+                    //     return MessageBox.success("There are no Corresponed Types exists...");
+                    // }
                 },
                 error: (oError) => {
                     console.error("Error:", oError);
@@ -609,6 +610,7 @@ sap.ui.define([
         },
         onChangeCorrSpRole: function (oEvent) {
             const oSelectedItem = oEvent.getParameter("selectedItem");
+            let oModel = oController.getView().getModel("SelectionModel");
             if (oSelectedItem) {
                 const sSelectedKey = oSelectedItem.getKey();
                 let oDeliveryChannel = new sap.m.Select();
@@ -624,14 +626,19 @@ sap.ui.define([
                     }
                     oInput.setEditable(false);
                     oController.getComboUOM('', "cmbUOM");
+                    let objRecord = [{ "key": 'EMAL', "text": 'EMAL' }];
+                    oModel.setProperty("/DeliveryChannel", objRecord);
                     oDeliveryChannel.setSelectedKey("EMAL");
                     oDeliveryChannel.setEditable(false);
                 } else if (sSelectedKey === 'COMM') {
                     oDeliveryChannel.setEditable(true);
+                    let objRecord = [{ "key": '', "text": '' }];
+                    oModel.setProperty("/DeliveryChannel", objRecord);
                 }
             }
         },
         onChangeCorrespType: function (oEvent) {
+            debugger;
             const oCorreType = oEvent.getSource().getSelectedKey();
             let paramCorreType = '';
             let oInput = new sap.m.Input();
@@ -641,6 +648,28 @@ sap.ui.define([
             let oDeliveryChannel = new sap.m.Select();
             oDeliveryChannel = this.byId("idDeliveryChannel");
             oDeliveryChannel.setEditable(true);
+            var oModel = oController.getView().getModel("SelectionModel");
+            if (oCorreType !== '') {
+                var getDeliveryChannel = oController._fngetDeliveryChannel(oCorreType);
+                if (getDeliveryChannel.length > 0) {
+                    var oDL = getDeliveryChannel.split(",");
+                    var oDLData = [];
+                    for (var i = 0; i < oDL.length; i++) {
+                        let objRecord = { "key": oDL[i], "text": oDL[i] };
+                        oDLData.push(objRecord);
+                    }
+                    oModel.setProperty("/DeliveryChannel", oDLData);
+                }
+                else {
+                    let objRecord = [{ "key": '', "text": '' }];
+                    oModel.setProperty("/DeliveryChannel", objRecord);
+                }
+            }
+            else {
+                let objRecord = [{ "key": '', "text": '' }];
+                oModel.setProperty("/DeliveryChannel", objRecord);
+            }
+
             if (oCorreType !== '') {
                 oCorreSpRole.setSelectedKey("COMM");
             }
@@ -659,6 +688,18 @@ sap.ui.define([
                 oInput.setEditable(false);
                 oController.getComboUOM('', "cmbUOM");
             }
+        },
+        _fngetDeliveryChannel: function (correType) {
+            debugger;
+            // let oDeliveryChannel = oCorrespTypeModel.getData("CorrespondType")[0];
+            let oGetData = [];
+            for (var i = 0; i < oCorrespTypeModel.getData("CorrespondType")[0].length; i++) {
+                oGetData.push({ "correType": oCorrespTypeModel.getData("CorrespondType")[0][i].CorrespondenceTypeID, "DL": oCorrespTypeModel.getData("CorrespondType")[0][i].DeliveryChannels });
+            }
+            var oTargetProduct = oGetData.find(function (oDL) {
+                return oDL.correType === correType;
+            });
+            return oTargetProduct.DL;
         },
         getComboUOM: function (oParam, cmbId) {
             let oComboBox = new sap.m.ComboBox();

@@ -42,12 +42,15 @@
 				</Select>		
 
 				<Label text="Delivery Channel"/>
-				<Select id="idDeliveryChannel">
-					<core:Item key="EMAL" text="EMAIL" />
+				<Select id="idDeliveryChannel" items="{SelectionModel>/DeliveryChannel}">
+					<!-- <core:Item key="EMAL" text="EMAIL" />
 					<core:Item key="SMS" text="SMS" />
 					<core:Item key="IVR" text="IVR" />
 					<core:Item key="PUSH" text="PUSH" />
-					<core:Item key="LETT" text="LETTER" />
+					<core:Item key="LETT" text="LETTER" /> -->
+					<core:Item 
+						key="{SelectionModel>Key}" 
+						text="{SelectionModel>text}" />
 				</Select>
 				<Label text="Threshold"/>
 				<Input
