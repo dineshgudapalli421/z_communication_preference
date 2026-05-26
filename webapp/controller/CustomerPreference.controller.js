@@ -303,7 +303,7 @@ sap.ui.define([
             const objectKey = this.byId("inputobjKey").getValue(); //this.byId("cmbobjKey").getSelectedKey() ? this.byId("cmbobjKey").getSelectedItem().getText() : '';
             const correspType = this.byId("cmbCorrespType").getSelectedKey() ? this.byId("cmbCorrespType").getSelectedKey() : '';
             const correspRole = this.byId("idCorrespRole").getSelectedKey() ? this.byId("idCorrespRole").getSelectedKey() : '';
-            const deliveryChannel = this.byId("idDeliveryChannel").getSelectedKey() ? this.byId("idDeliveryChannel").getSelectedKey() : '';
+            const deliveryChannel = this.byId("idDeliveryChannel").getSelectedItem().getText() ? this.byId("idDeliveryChannel").getSelectedItem().getText() : '';
             // const deliveryAddress = this.byId("idDeliveryAddress").getValue();
             const oThreshold = this.byId("idThreshold").getValue();
             const oUom = this.byId("cmbUOM").getSelectedKey() ? this.byId("cmbUOM").getSelectedKey() : '';
